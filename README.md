@@ -1,5 +1,7 @@
 # Task Tracker
 
+[![Tests](https://github.com/thefoxylabs/simple-task-tracker/actions/workflows/tests.yml/badge.svg)](https://github.com/thefoxylabs/simple-task-tracker/actions/workflows/tests.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 **An open-source, self-hosted, white-label task tracker for teams.**
 Download it, host it on your own server and brand it as your own: name, logo and colours are all set from the admin **Settings** page.
 
@@ -165,7 +167,7 @@ vendor/bin/pint
 
 ## Contributing
 
-Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md). To report a security problem, please follow [SECURITY.md](SECURITY.md).
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and our [Code of Conduct](CODE_OF_CONDUCT.md). To report a security problem, please follow [SECURITY.md](SECURITY.md).
 
 ## License
 
