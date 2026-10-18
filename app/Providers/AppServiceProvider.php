@@ -43,7 +43,11 @@ class AppServiceProvider extends ServiceProvider
 
     protected function applySettings(Settings $settings): void
     {
-        config(['app.name' => $settings->get('app_name')]);
+        config([
+            'app.name' => $settings->get('app_name'),
+            // The page-loading bar shown while navigating between pages.
+            'livewire.navigate.progress_bar_color' => $settings->get('primary_color'),
+        ]);
 
         $timezone = $settings->get('timezone');
 

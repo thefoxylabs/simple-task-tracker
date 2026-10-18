@@ -24,6 +24,19 @@
     --brand: #4f46e5;
 }
 
+/* Native controls and focus outlines follow the brand colour too. */
+:root {
+    accent-color: var(--brand);
+}
+
+*:focus-visible {
+    outline-color: var(--brand);
+}
+
+::selection {
+    background-color: color-mix(in oklab, var(--brand) 20%, white);
+}
+
 [x-cloak] {
     display: none !important;
 }
