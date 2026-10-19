@@ -309,7 +309,7 @@
 
 <header class="nav" id="top">
     <div class="wrap">
-        <a href="#top" class="logo">
+        <a href="#" class="logo" data-to-top aria-label="Back to top">
             <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
             Task Tracker
         </a>
@@ -771,7 +771,7 @@ docker compose up -d</pre></div>
 
 <footer>
     <div class="wrap">
-        <a href="#top" class="logo" style="font-size: 15px">
+        <a href="#" class="logo" data-to-top aria-label="Back to top" style="font-size: 15px">
             <span class="logo-mark" style="width: 26px; height: 26px; border-radius: 7px"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
             Task Tracker
         </a>
@@ -942,6 +942,16 @@ docker compose up -d</pre></div>
             startX = null;
         });
     })();
+
+    // The logo takes you back to the top of the page.
+    document.querySelectorAll('[data-to-top]').forEach((link) => {
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            document.getElementById('top').classList.remove('open');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            history.replaceState(null, '', location.pathname + location.search);
+        });
+    });
 
     document.querySelectorAll('.copy').forEach((button) => {
         button.addEventListener('click', async () => {
