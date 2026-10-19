@@ -16,6 +16,13 @@ return [
     'default' => env('QUEUE_CONNECTION', 'database'),
 
     /*
+    | Process the queue from the scheduler (`php artisan schedule:run` in cron)
+    | so emails are sent without running a separate worker process.
+    */
+
+    'worker_in_scheduler' => (bool) env('QUEUE_WORKER_IN_SCHEDULER', true),
+
+    /*
     |--------------------------------------------------------------------------
     | Queue Connections
     |--------------------------------------------------------------------------

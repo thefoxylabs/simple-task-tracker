@@ -4,11 +4,13 @@ namespace App\Notifications;
 
 use App\Models\Task;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
 
-class TaskReminder extends Notification
+class TaskReminder extends QueuedNotification
 {
-    public function __construct(public Task $task) {}
+    public function __construct(public Task $task)
+    {
+        parent::__construct();
+    }
 
     public function via(object $notifiable): array
     {

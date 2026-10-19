@@ -3,11 +3,13 @@
 namespace App\Notifications;
 
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
 
-class StaffInvitation extends Notification
+class StaffInvitation extends QueuedNotification
 {
-    public function __construct(public string $token, public string $invitedBy) {}
+    public function __construct(public string $token, public string $invitedBy)
+    {
+        parent::__construct();
+    }
 
     public function via(object $notifiable): array
     {

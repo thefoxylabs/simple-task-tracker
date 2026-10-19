@@ -185,7 +185,7 @@
                     <span wire:loading wire:target="sendTestMail">Sending…</span>
                 </button>
                 <div class="mt-6 rounded-lg bg-amber-50 p-3 text-xs text-amber-800 ring-1 ring-amber-600/20">
-                    Reminders need the scheduler running. Add this cron entry on your server:
+                    Emails are queued and sent by the scheduler, together with reminders. Add this cron entry on your server:
                     <code class="mt-1 block break-all">* * * * * php {{ base_path('artisan') }} schedule:run</code>
                 </div>
             </form>

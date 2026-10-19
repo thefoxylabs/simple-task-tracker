@@ -18,7 +18,7 @@ Built with **Laravel 13**, **Livewire 4** and **Tailwind CSS 4**.
 - **Projects.** Group tasks by project, track progress, set a lead and dates, and attach briefs or specs. Archive finished projects and restore them later.
 - **Plans.** Daily, weekly, monthly, quarterly and yearly goals for a person, a staff group or the whole company. Link tasks to a plan to see its progress.
 - **Recurring tasks.** Routine work that is created and assigned automatically every day, week, month, quarter or year.
-- **Deadlines and email reminders.** Whoever sets a task chooses the deadline and when the reminder email goes out. Assignees are also emailed when a task is assigned to them.
+- **Deadlines and email reminders.** Whoever sets a task chooses the deadline and when the reminder email goes out. Assignees are also emailed when a task is assigned to them. Emails are queued and sent in the background, with automatic retries.
 - **Staff tracking.** See each person's tasks for any day, week, month, quarter or year, with completed, open and overdue counts.
 - **Staff and groups.** Add staff (with an email invitation to set their password), organise them into groups such as departments, and deactivate leavers.
 - **Attachments.** Upload files to tasks (for example, proof of completion) and to projects. Files are stored in **Cloudflare R2** by default, or locally or in S3.
@@ -83,7 +83,7 @@ Point your web server's document root at the `public/` folder, then open the sit
 
 > **Tip:** On a public server, set `SETUP_TOKEN` in `.env` before the first visit. The setup wizard will then only accept that secret, so nobody else can claim the admin account.
 
-### Scheduler (required for reminders and recurring tasks)
+### Scheduler (required for emails, reminders and recurring tasks)
 
 Add this cron entry on the server:
 
@@ -91,7 +91,11 @@ Add this cron entry on the server:
 * * * * * cd /path/to/task-tracker && php artisan schedule:run >> /dev/null 2>&1
 ```
 
-It sends reminder emails every minute and creates recurring tasks every 15 minutes.
+Every minute it sends due reminders and delivers queued emails. Every 15 minutes it creates recurring tasks.
+
+**Emails are queued.** Assignment emails, reminders, invitations and password resets are saved to a queue (the `jobs` table) and sent in the background, so a slow mail server never slows the app down. Failed sends are retried three times (after 1, 5 and 15 minutes) and then recorded in `failed_jobs`. Run `php artisan queue:retry all` to try them again.
+
+The cron entry above processes the queue, so no extra process is needed. If you'd rather run a dedicated worker (for example with Supervisor), set `QUEUE_WORKER_IN_SCHEDULER=false` and run `php artisan queue:work --tries=4`. Workers reload automatically when an admin changes settings.
 
 ### Docker
 

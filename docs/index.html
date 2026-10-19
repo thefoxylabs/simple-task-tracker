@@ -754,7 +754,7 @@ docker compose up -d</pre></div>
                 </details>
                 <details>
                     <summary>How do email reminders work?</summary>
-                    <p>When someone creates a task they choose the deadline and when the reminder should go out (for example, one day before). The built-in scheduler checks every minute and emails the assignee using your SMTP settings.</p>
+                    <p>When someone creates a task they choose the deadline and when the reminder should go out (for example, one day before). The built-in scheduler checks every minute and emails the assignee using your SMTP settings. All emails are queued and sent in the background with automatic retries, so a slow mail server never slows anyone down.</p>
                 </details>
                 <details>
                     <summary>Can staff see each other's tasks?</summary>

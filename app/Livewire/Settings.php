@@ -6,6 +6,7 @@ use App\Notifications\TestMail;
 use App\Support\Mailer;
 use App\Support\Settings as SettingsStore;
 use App\Support\Uploads;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
@@ -110,6 +111,7 @@ class Settings extends Component
         }
 
         $settings->set(array_map(fn ($v) => $v ?? '', $data));
+        $this->reloadWorkers();
         $this->redirectRoute('settings', ['tab' => 'branding']);
         session()->flash('status', 'Branding saved');
     }
@@ -118,6 +120,7 @@ class Settings extends Component
     {
         $this->deleteLogoFile($settings);
         $settings->set(['logo_path' => null, 'logo_disk' => null]);
+        $this->reloadWorkers();
         $this->redirectRoute('settings', ['tab' => 'branding']);
     }
 
@@ -134,6 +137,7 @@ class Settings extends Component
             'default_reminder_minutes' => (int) $this->default_reminder_minutes,
             'notify_on_assignment' => $this->notify_on_assignment,
         ]);
+        $this->reloadWorkers();
 
         $this->dispatch('notify', message: 'Settings saved');
     }
@@ -168,6 +172,7 @@ class Settings extends Component
 
         $settings->set($values);
         Mailer::configure($settings);
+        $this->reloadWorkers();
         $this->mail_password = '';
 
         $this->dispatch('notify', message: 'Mail settings saved');
@@ -185,6 +190,15 @@ class Settings extends Component
         } catch (Throwable $e) {
             $this->addError('test_email', 'Sending failed: '.$e->getMessage());
         }
+    }
+
+    /**
+     * Long-running queue workers load settings once at start-up; ask them to
+     * restart so queued emails use the new branding and SMTP details.
+     */
+    protected function reloadWorkers(): void
+    {
+        Artisan::call('queue:restart');
     }
 
     protected function deleteLogoFile(SettingsStore $settings): void
