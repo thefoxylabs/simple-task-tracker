@@ -172,6 +172,20 @@ vendor/bin/pint
 | `app/Support/Settings.php` | Company settings (branding, SMTP) stored in the database |
 | `resources/views` | Blade views and UI components |
 
+## Need help installing?
+
+**Foxy Labs** can install and configure Task Tracker for you for a **one-time setup fee of $100**. This covers your server, domain and HTTPS, database, email (SMTP), file storage, branding and the reminder scheduler. Ongoing maintenance and support can be agreed afterwards.
+
+Get in touch:
+
+- **Email:** [hello@thefoxylabs.com](mailto:hello@thefoxylabs.com?subject=Task%20Tracker%20installation)
+- **WhatsApp:** [+234 708 640 7310](https://wa.me/2347086407310)
+- **Website:** [thefoxylabs.com/contact-us](https://thefoxylabs.com/contact-us/)
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for what's new in each release.
+
 ## Contributing
 
 Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and our [Code of Conduct](CODE_OF_CONDUCT.md). To report a security problem, please follow [SECURITY.md](SECURITY.md).

@@ -29,6 +29,7 @@
         }
 
         * { box-sizing: border-box; }
+        [hidden] { display: none !important; }
         html { scroll-behavior: smooth; }
         body {
             margin: 0;
@@ -206,6 +207,57 @@
         footer nav { display: flex; flex-wrap: wrap; gap: 22px; }
         footer a:hover { color: var(--ink); }
 
+        /* Installation help */
+        .help { display: grid; grid-template-columns: 1.15fr 1fr; gap: 22px; align-items: stretch; }
+        .price-card { position: relative; border-radius: 24px; padding: 36px; background: #0f172a; color: #cbd5e1; overflow: hidden; box-shadow: 0 30px 60px -24px rgb(15 23 42 / .45); }
+        .price-card::before { content: ''; position: absolute; inset: -40% -30% auto auto; width: 420px; height: 420px; background: radial-gradient(closest-side, rgb(99 102 241 / .45), transparent); pointer-events: none; }
+        .price-card > * { position: relative; }
+        .price-card .tag { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #a5b4fc; background: rgb(99 102 241 / .18); padding: 5px 10px; border-radius: 999px; }
+        .price-card h3 { color: #fff; font-size: 24px; margin-top: 16px; }
+        .price { display: flex; align-items: baseline; gap: 10px; margin-top: 14px; color: #fff; }
+        .price b { font-size: 56px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+        .price span { color: #94a3b8; font-size: 15px; }
+        .price-card ul { list-style: none; padding: 0; margin: 26px 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; }
+        .price-card li { display: flex; gap: 10px; font-size: 14.5px; }
+        .price-card li svg { width: 18px; height: 18px; flex: none; color: #34d399; margin-top: 3px; }
+        .support-card { border-radius: 24px; padding: 36px; background: #fff; box-shadow: 0 0 0 1px var(--line); display: flex; flex-direction: column; }
+        .support-card .eyebrow { align-self: flex-start; }
+        .support-card h3 { font-size: 22px; margin-top: 16px; }
+        .support-card > p { margin-top: 10px; font-size: 15.5px; }
+        .support-card ul { list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 10px; font-size: 15px; }
+        .support-card li { display: flex; gap: 10px; }
+        .support-card li::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--brand); margin-top: 9px; flex: none; }
+        .contact-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+        .btn-whatsapp { background: #25d366; color: #fff; box-shadow: 0 8px 20px -8px rgb(37 211 102 / .7); }
+        .btn-whatsapp:hover { background: #1fb959; transform: translateY(-1px); }
+        .contact-note { margin-top: 14px; font-size: 13.5px; color: #94a3b8; }
+        .contact-note a { color: #c7d2fe; text-decoration: underline; text-underline-offset: 2px; }
+        .support-card .contact-note { color: var(--muted); }
+        .support-card .contact-note a { color: var(--brand); }
+
+        /* Lightbox */
+        [data-zoom] { cursor: zoom-in; }
+        .lightbox { position: fixed; inset: 0; z-index: 100; display: none; flex-direction: column; background: rgb(2 6 23 / .92); backdrop-filter: blur(6px); color: #e2e8f0; }
+        .lightbox.open { display: flex; animation: lb-fade .2s ease; }
+        .lb-top { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; font-size: 14px; }
+        .lb-count { font-variant-numeric: tabular-nums; color: #94a3b8; }
+        .lb-stage { position: relative; flex: 1; display: flex; align-items: center; justify-content: center; padding: 0 72px; min-height: 0; touch-action: pan-y; }
+        .lb-stage img { max-width: 100%; max-height: 100%; width: auto; height: auto; border-radius: 12px; box-shadow: 0 30px 80px -20px rgb(0 0 0 / .7); background: #fff; user-select: none; -webkit-user-drag: none; animation: lb-zoom .25s ease; }
+        .lb-caption { padding: 16px 20px 22px; text-align: center; font-size: 15px; min-height: 60px; }
+        .lb-caption b { color: #fff; display: block; font-size: 16px; }
+        .lb-btn { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; border: 0; background: rgb(255 255 255 / .1); color: #fff; cursor: pointer; transition: background .15s; }
+        .lb-btn:hover { background: rgb(255 255 255 / .2); }
+        .lb-btn svg { width: 22px; height: 22px; }
+        .lb-prev, .lb-next { position: absolute; top: 50%; transform: translateY(-50%); }
+        .lb-prev { left: 14px; } .lb-next { right: 14px; }
+        .lb-thumbs { display: flex; gap: 8px; justify-content: center; padding: 0 16px 18px; overflow-x: auto; }
+        .lb-thumbs button { flex: none; width: 64px; height: 42px; padding: 0; border: 2px solid transparent; border-radius: 8px; overflow: hidden; background: #1e293b; opacity: .55; cursor: pointer; transition: opacity .15s, border-color .15s; }
+        .lb-thumbs button.active, .lb-thumbs button:hover { opacity: 1; }
+        .lb-thumbs button.active { border-color: #818cf8; }
+        .lb-thumbs img { width: 100%; height: 100%; object-fit: cover; object-position: top left; }
+        @keyframes lb-fade { from { opacity: 0; } }
+        @keyframes lb-zoom { from { opacity: 0; transform: scale(.97); } }
+
         /* Responsive */
         @media (max-width: 1024px) {
             .features, .gallery { grid-template-columns: repeat(2, 1fr); }
@@ -217,7 +269,7 @@
         @media (max-width: 860px) {
             .nav-links, .nav-cta { display: none; }
             .menu-btn { display: block; }
-            .install { grid-template-columns: 1fr; }
+            .install, .help { grid-template-columns: 1fr; }
             .strip .wrap { grid-template-columns: repeat(2, 1fr); }
             .strip div:nth-child(3) { border-left: 0; }
             .strip div:nth-child(n + 3) { border-top: 1px solid var(--line); }
@@ -234,6 +286,12 @@
             .card { padding: 22px 18px; }
             .band .ctas .btn { width: 100%; }
             .clone { flex-direction: column; align-items: stretch; padding: 12px; }
+            .price-card, .support-card { padding: 26px 22px; }
+            .price-card ul { grid-template-columns: 1fr; }
+            .contact-row .btn { width: 100%; }
+            .lb-stage { padding: 0 8px; }
+            .lb-prev, .lb-next { display: none; }
+            .lb-thumbs { display: none; }
         }
     </style>
 </head>
@@ -250,6 +308,7 @@
             <a href="#branding">Branding</a>
             <a href="#screenshots">Screenshots</a>
             <a href="#install">Install</a>
+            <a href="#help">Get help</a>
             <a href="#faq">FAQ</a>
         </nav>
         <div class="nav-cta">
@@ -268,6 +327,7 @@
         <a href="#branding">Branding</a>
         <a href="#screenshots">Screenshots</a>
         <a href="#install">Install</a>
+        <a href="#help">Get installation help</a>
         <a href="#faq">FAQ</a>
         <a class="btn btn-primary" href="https://github.com/thefoxylabs/simple-task-tracker/archive/refs/heads/main.zip">Download source code</a>
     </div>
@@ -299,9 +359,9 @@
             <div class="showcase">
                 <div class="browser">
                     <div class="browser-bar"><i></i><i></i><i></i><span class="url">tasks.yourcompany.com/board</span></div>
-                    <img src="screenshots/board.png" alt="The Kanban board showing tasks in To do, In progress, In review and Done columns" width="1440" height="820">
+                    <img src="screenshots/board.png" alt="The Kanban board showing tasks in To do, In progress, In review and Done columns" width="1440" height="820" data-zoom data-title="Kanban board">
                 </div>
-                <div class="phone"><img src="screenshots/mobile.png" alt="The board on a phone" width="390" height="760" loading="lazy"></div>
+                <div class="phone"><img src="screenshots/mobile.png" alt="The board on a phone, shown with a custom brand" width="390" height="760" loading="lazy" data-zoom data-title="On your phone"></div>
             </div>
         </div>
     </section>
@@ -537,7 +597,7 @@ docker compose up -d</pre></div>
                 <div class="req"><b>Node.js 20+</b>only to build the CSS and JS</div>
                 <div class="req"><b>SMTP + R2 bucket</b>for emails and file uploads</div>
             </div>
-            <p class="note">Full instructions are in the <a href="https://github.com/thefoxylabs/simple-task-tracker#readme" style="color: var(--brand); font-weight: 600">README</a>. Tip: set <code>SETUP_TOKEN</code> in <code>.env</code> so only you can create the first admin.</p>
+            <p class="note">Full instructions are in the <a href="https://github.com/thefoxylabs/simple-task-tracker#readme" style="color: var(--brand); font-weight: 600">README</a>. Tip: set <code>SETUP_TOKEN</code> in <code>.env</code> so only you can create the first admin. Prefer us to do it? <a href="#help" style="color: var(--brand); font-weight: 600">We install it for $100</a>.</p>
         </div>
     </section>
 
@@ -552,10 +612,63 @@ docker compose up -d</pre></div>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 5-5m-5 5-5-5M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
                         Download .zip
                     </a>
-                    <a class="btn btn-ghost-light" href="https://github.com/thefoxylabs/simple-task-tracker/releases" target="_blank" rel="noopener">Releases</a>
+                    <a class="btn btn-ghost-light" href="https://github.com/thefoxylabs/simple-task-tracker/blob/main/CHANGELOG.md" target="_blank" rel="noopener">What's new</a>
                     <a class="btn btn-ghost-light" href="https://github.com/thefoxylabs/simple-task-tracker" target="_blank" rel="noopener">★ Star on GitHub</a>
                 </div>
                 <div class="clone"><code>git clone https://github.com/thefoxylabs/simple-task-tracker.git</code><button class="copy">Copy</button></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Installation help -->
+    <section class="section" id="help">
+        <div class="wrap">
+            <div class="section-head">
+                <span class="eyebrow">Done for you</span>
+                <h2>Rather not install it yourself?</h2>
+                <p>The team at Foxy Labs, who built Task Tracker, can set everything up for you and hand over a ready-to-use, fully branded workspace.</p>
+            </div>
+            <div class="help">
+                <div class="price-card">
+                    <span class="tag">Professional installation</span>
+                    <h3>We install it, you start using it</h3>
+                    <div class="price"><b>$100</b><span>one-time setup fee</span></div>
+                    <ul>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Installation on your server, VPS or cloud</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Your domain with HTTPS</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Database set up and secured</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Email (SMTP) reminders working</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Cloudflare R2 file storage</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Your logo, name and colours</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Reminder scheduler (cron)</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Admin account and a walkthrough</li>
+                    </ul>
+                    <div class="contact-row">
+                        <a class="btn btn-whatsapp" data-contact="whatsapp" hidden target="_blank" rel="noopener">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.79-1.47-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.6-.92-2.2-.24-.58-.49-.5-.67-.5h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.22 1.36.19 1.87.12.57-.09 1.75-.72 2-1.41.25-.7.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35M12.05 21.5h-.01a9.4 9.4 0 0 1-4.8-1.31l-.34-.2-3.57.93.95-3.48-.22-.36a9.4 9.4 0 0 1-1.44-5.02c0-5.2 4.23-9.43 9.44-9.43a9.37 9.37 0 0 1 9.42 9.44c0 5.2-4.23 9.43-9.43 9.43m8.03-17.46A11.27 11.27 0 0 0 12.05.72C5.8.72.7 5.8.7 12.06c0 2 .52 3.95 1.52 5.67L.6 23.28l5.68-1.49a11.3 11.3 0 0 0 5.42 1.38h.01c6.25 0 11.34-5.09 11.34-11.34 0-3.03-1.18-5.88-3.32-8.02"/></svg>
+                            Chat on WhatsApp
+                        </a>
+                        <a class="btn btn-light" data-contact="email" hidden>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+                            Email us
+                        </a>
+                        <a class="btn btn-ghost-light" data-contact="website" hidden target="_blank" rel="noopener">Visit our website</a>
+                        <a class="btn btn-light" data-contact="fallback" href="https://github.com/thefoxylabs/simple-task-tracker/issues/new?template=installation.yml" target="_blank" rel="noopener">Request installation</a>
+                    </div>
+                    <p class="contact-note" data-contact-note hidden></p>
+                </div>
+                <div class="support-card">
+                    <span class="eyebrow">After installation</span>
+                    <h3>Maintenance &amp; support</h3>
+                    <p>Want someone to keep things running? We'll agree a plan that fits your team and budget. Pricing is negotiated once you're up and running.</p>
+                    <ul>
+                        <li>Updates to new Task Tracker versions</li>
+                        <li>Backups and server monitoring</li>
+                        <li>Priority help for your admins and staff</li>
+                        <li>Custom features built for your workflow</li>
+                    </ul>
+                    <p class="contact-note" style="margin-top: auto; padding-top: 24px">Mention support when you contact us, or ask about it after your installation. There's no obligation.</p>
+                </div>
             </div>
         </div>
     </section>
@@ -575,6 +688,10 @@ docker compose up -d</pre></div>
                 <details>
                     <summary>Can we remove your name and use our own brand?</summary>
                     <p>Absolutely, that's the point. Set your app name, logo and colour in Settings and your team will only ever see your brand. The MIT licence only asks that you keep the licence notice in the source code.</p>
+                </details>
+                <details>
+                    <summary>Can you install it for us?</summary>
+                    <p>Yes. Foxy Labs offers professional installation for a one-time fee of $100: server, domain and HTTPS, database, email, file storage, branding and the reminder scheduler. Maintenance and support can be agreed afterwards. <a href="#help" style="color: var(--brand); font-weight: 600">Get in touch</a>.</p>
                 </details>
                 <details>
                     <summary>What do we need to host it?</summary>
@@ -610,6 +727,8 @@ docker compose up -d</pre></div>
         <nav>
             <a href="https://github.com/thefoxylabs/simple-task-tracker" target="_blank" rel="noopener">GitHub</a>
             <a href="https://github.com/thefoxylabs/simple-task-tracker#readme" target="_blank" rel="noopener">Documentation</a>
+            <a href="https://github.com/thefoxylabs/simple-task-tracker/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a>
+            <a href="#help">Installation help</a>
             <a href="https://github.com/thefoxylabs/simple-task-tracker/issues" target="_blank" rel="noopener">Report an issue</a>
             <a href="https://github.com/thefoxylabs/simple-task-tracker/blob/main/LICENSE" target="_blank" rel="noopener">MIT licence</a>
         </nav>
@@ -618,6 +737,149 @@ docker compose up -d</pre></div>
 </footer>
 
 <script>
+    /*
+     * Foxy Labs contact details for installation and support.
+     * Leave a value empty to hide its button.
+     */
+    const CONTACT = {
+        email: 'hello@thefoxylabs.com',
+        whatsapp: '+234 708 640 7310',
+        website: 'https://thefoxylabs.com/contact-us/',
+    };
+
+    (function setUpContact() {
+        const message = "Hi Foxy Labs, I'd like help installing Task Tracker (one-time $100 setup).\n\nCompany:\nNumber of users:\nHosting (server / VPS / shared / none yet):\n";
+        const links = {
+            email: CONTACT.email && `mailto:${CONTACT.email}?subject=${encodeURIComponent('Task Tracker installation')}&body=${encodeURIComponent(message)}`,
+            whatsapp: CONTACT.whatsapp && `https://wa.me/${CONTACT.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`,
+            website: CONTACT.website,
+        };
+        let shown = 0;
+
+        for (const [key, href] of Object.entries(links)) {
+            const el = document.querySelector(`[data-contact="${key}"]`);
+            if (el && href) {
+                el.href = href;
+                el.hidden = false;
+                shown++;
+            }
+        }
+
+        const fallback = document.querySelector('[data-contact="fallback"]');
+        const note = document.querySelector('[data-contact-note]');
+
+        if (shown) {
+            fallback.hidden = true;
+            const parts = [];
+            if (CONTACT.email) parts.push(`<a href="${links.email}">${CONTACT.email}</a>`);
+            if (CONTACT.whatsapp) parts.push(`WhatsApp <a href="${links.whatsapp}" target="_blank" rel="noopener">${CONTACT.whatsapp}</a>`);
+            note.innerHTML = parts.join(' · ') + ` · or <a href="${fallback.href}" target="_blank" rel="noopener">request on GitHub</a>`;
+            note.hidden = false;
+        }
+    })();
+
+    /* Screenshot lightbox: every [data-zoom] image and .shot link opens here. */
+    (function setUpLightbox() {
+        const sources = [];
+        const add = (el, src, title, text) => {
+            el.setAttribute('data-zoom', '');
+            const index = sources.push({ src, title, text }) - 1;
+            el.addEventListener('click', (event) => {
+                event.preventDefault();
+                open(index);
+            });
+        };
+
+        document.querySelectorAll('img[data-zoom]').forEach((img) => add(img, img.currentSrc || img.src, img.dataset.title || img.alt, ''));
+        document.querySelectorAll('.split a.shot, .compare .shot, .gallery figure').forEach((el) => {
+            const img = el.querySelector('img');
+            const caption = el.closest('figure')?.querySelector('figcaption');
+            const title = caption?.querySelector('b')?.textContent || caption?.textContent || img.alt;
+            const text = caption?.querySelector('b') ? caption.textContent.replace(title, '').trim() : '';
+            add(el.matches('figure') ? el.querySelector('a, .shot') : el, img.getAttribute('src'), title, text);
+        });
+
+        const icon = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg>`;
+        const box = document.createElement('div');
+        box.className = 'lightbox';
+        box.setAttribute('role', 'dialog');
+        box.setAttribute('aria-modal', 'true');
+        box.setAttribute('aria-label', 'Screenshot viewer');
+        box.innerHTML = `
+            <div class="lb-top"><span class="lb-count"></span><button class="lb-btn lb-close" aria-label="Close">${icon('M6 6l12 12M18 6 6 18')}</button></div>
+            <div class="lb-stage">
+                <button class="lb-btn lb-prev" aria-label="Previous">${icon('M15 18l-6-6 6-6')}</button>
+                <img alt="">
+                <button class="lb-btn lb-next" aria-label="Next">${icon('M9 18l6-6-6-6')}</button>
+            </div>
+            <div class="lb-caption"></div>
+            <div class="lb-thumbs"></div>`;
+        document.body.appendChild(box);
+
+        const img = box.querySelector('.lb-stage img');
+        const thumbs = box.querySelector('.lb-thumbs');
+        sources.forEach((s, i) => {
+            const b = document.createElement('button');
+            b.setAttribute('aria-label', s.title);
+            b.innerHTML = `<img src="${s.src}" alt="" loading="lazy">`;
+            b.addEventListener('click', () => show(i));
+            thumbs.appendChild(b);
+        });
+
+        let current = 0;
+        let lastFocus = null;
+
+        function show(i) {
+            current = (i + sources.length) % sources.length;
+            const s = sources[current];
+            img.src = s.src;
+            img.alt = s.title;
+            img.style.animation = 'none';
+            img.offsetHeight; // restart the zoom-in animation
+            img.style.animation = '';
+            box.querySelector('.lb-count').textContent = `${current + 1} / ${sources.length}`;
+            box.querySelector('.lb-caption').innerHTML = `<b>${s.title}</b>${s.text}`;
+            [...thumbs.children].forEach((t, n) => t.classList.toggle('active', n === current));
+            thumbs.children[current]?.scrollIntoView({ block: 'nearest', inline: 'center' });
+            [current - 1, current + 1].forEach((n) => { new Image().src = sources[(n + sources.length) % sources.length].src; });
+        }
+
+        function open(i) {
+            lastFocus = document.activeElement;
+            box.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            show(i);
+            box.querySelector('.lb-close').focus();
+        }
+
+        function close() {
+            box.classList.remove('open');
+            document.body.style.overflow = '';
+            lastFocus?.focus?.();
+        }
+
+        box.querySelector('.lb-close').addEventListener('click', close);
+        box.querySelector('.lb-prev').addEventListener('click', () => show(current - 1));
+        box.querySelector('.lb-next').addEventListener('click', () => show(current + 1));
+        box.querySelector('.lb-stage').addEventListener('click', (e) => { if (e.target.classList.contains('lb-stage')) close(); });
+        document.addEventListener('keydown', (e) => {
+            if (! box.classList.contains('open')) return;
+            if (e.key === 'Escape') close();
+            if (e.key === 'ArrowLeft') show(current - 1);
+            if (e.key === 'ArrowRight') show(current + 1);
+        });
+
+        // Swipe left / right on touch screens.
+        let startX = null;
+        box.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
+        box.addEventListener('touchend', (e) => {
+            if (startX === null) return;
+            const dx = e.changedTouches[0].clientX - startX;
+            if (Math.abs(dx) > 50) show(current + (dx < 0 ? 1 : -1));
+            startX = null;
+        });
+    })();
+
     document.querySelectorAll('.copy').forEach((button) => {
         button.addEventListener('click', async () => {
             const source = button.parentElement.querySelector('pre, code');

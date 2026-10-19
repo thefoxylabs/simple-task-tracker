@@ -1,0 +1,50 @@
+name: Installation help from Foxy Labs
+description: Ask Foxy Labs to install Task Tracker for you (one-time setup fee of $100)
+title: "Installation request: "
+labels: [installation]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Foxy Labs can install and configure Task Tracker for you for a **one-time setup fee of $100**.
+        Ongoing maintenance and support can be agreed afterwards.
+
+        ⚠️ This request is public. **Do not** include passwords, API keys or server logins here. We'll collect those privately.
+  - type: input
+    id: company
+    attributes:
+      label: Company name
+    validations:
+      required: true
+  - type: input
+    id: contact
+    attributes:
+      label: How can we reach you?
+      description: An email address or WhatsApp number. You can also reach us directly at hello@thefoxylabs.com or on WhatsApp +234 708 640 7310.
+    validations:
+      required: true
+  - type: dropdown
+    id: hosting
+    attributes:
+      label: Where should it be installed?
+      options:
+        - We have a server or VPS
+        - We have shared PHP hosting
+        - We don't have hosting yet. Please advise.
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: team
+    attributes:
+      label: Roughly how many people will use it?
+  - type: checkboxes
+    id: support
+    attributes:
+      label: Ongoing support
+      options:
+        - label: We're also interested in a maintenance and support plan
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else we should know?
