@@ -81,7 +81,7 @@ npm ci && npm run build
 
 Point your web server's document root at the `public/` folder, then open the site. The **setup wizard** asks for your workspace name and creates the first admin account.
 
-> **Tip:** On a public server, set `SETUP_TOKEN` in `.env` before the first visit. The setup wizard will then only accept that secret, so nobody else can claim the admin account.
+> **Setup token:** in production, the setup wizard asks for a secret token, so nobody else can claim your workspace before you do. Get it on the server with `php artisan app:setup-token` (Docker prints it in the container log), or choose your own by setting `SETUP_TOKEN` in `.env`.
 
 ### Scheduler (required for emails, reminders and recurring tasks)
 
@@ -100,7 +100,9 @@ The cron entry above processes the queue, so no extra process is needed. If you'
 ### Docker
 
 ```bash
-cp .env.example .env      # set APP_KEY (php artisan key:generate --show), APP_URL, SMTP and R2
+cp .env.example .env      # set APP_KEY (php artisan key:generate --show), APP_URL,
+                          # DB_PASSWORD, DB_ROOT_PASSWORD, SMTP and R2
+docker compose logs app | grep "Setup token"   # after start-up: the token for /setup
 docker compose up -d      # app on http://localhost:8080, MySQL and the scheduler
 ```
 
@@ -199,6 +201,19 @@ Get in touch:
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for what's new in each release.
+
+## Security
+
+Task Tracker is built to be safe to put on the internet:
+
+- **Access control.** Roles are checked on the server for every page, action and file download. Staff only see their own tasks, and the projects and plans that involve them.
+- **Sign-in protection.** Login, password reset and setup are rate-limited. Passwords need at least 10 characters with letters and numbers. Changing your email needs your current password, and changing your password signs you out on other devices.
+- **Protected setup.** In production, a one-time setup token is required to create the first admin.
+- **Browser hardening.** Security headers stop the app being framed by other sites. Cookies are encrypted, HTTP-only and HTTPS-only (`SESSION_SECURE_COOKIE=true`). The app only answers to the domain in `APP_URL`.
+- **Private files.** Uploads are stored privately and downloaded with short-lived links, only by people who can see the task or project.
+- **Secrets.** The SMTP password is encrypted in the database, and password-reset and invitation jobs are encrypted in the queue.
+
+To report a vulnerability, see [SECURITY.md](SECURITY.md).
 
 ## Contributing
 

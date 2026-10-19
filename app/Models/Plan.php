@@ -42,6 +42,19 @@ class Plan extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    /** Staff see company-wide plans, their group's plans and their own. */
+    public function scopeVisibleTo(Builder $query, User $user): void
+    {
+        if ($user->canManage()) {
+            return;
+        }
+
+        $query->where(fn (Builder $q) => $q
+            ->where('user_id', $user->id)
+            ->orWhere(fn (Builder $q) => $q->whereNotNull('staff_group_id')->where('staff_group_id', $user->staff_group_id))
+            ->orWhere(fn (Builder $q) => $q->whereNull('user_id')->whereNull('staff_group_id')));
+    }
+
     public function scopeWithProgress(Builder $query): void
     {
         $query->withCount([

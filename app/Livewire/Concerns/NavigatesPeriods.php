@@ -23,6 +23,16 @@ trait NavigatesPeriods
         return Period::tryFrom($this->period) ?? Period::Weekly;
     }
 
+    /** Called before rendering: values arrive from the URL, so validate them. */
+    public function renderingNavigatesPeriods(): void
+    {
+        $this->period = $this->periodEnum()->value;
+
+        if ($this->date !== '' && ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $this->date)) {
+            $this->date = '';
+        }
+    }
+
     /** @return array{0: CarbonImmutable, 1: CarbonImmutable} */
     public function periodRange(): array
     {

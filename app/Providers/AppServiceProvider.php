@@ -9,6 +9,7 @@ use App\Support\Mailer;
 use App\Support\Settings;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Rules\Password;
 use Livewire\Livewire;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,6 +22,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->applySettings($this->app->make(Settings::class));
+
+        // At least 10 characters with letters and numbers.
+        Password::defaults(fn () => Password::min(10)->letters()->numbers());
 
         // Re-check on every Livewire request that the user hasn't been deactivated.
         Livewire::addPersistentMiddleware([EnsureUserIsActive::class]);

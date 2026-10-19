@@ -2,7 +2,7 @@
     <x-page-header title="Plans" description="Daily, weekly, monthly, quarterly and yearly goals. Link tasks to a plan to track it.">
         <x-slot:actions>
             @can('manage')
-                <button type="button" wire:click="$dispatch('create-plan', { period: '{{ $period }}' })" class="btn btn-primary"><x-icon name="plus" class="size-4" /> New plan</button>
+                <button type="button" wire:click="$dispatch('create-plan', { period: $wire.period })" class="btn btn-primary"><x-icon name="plus" class="size-4" /> New plan</button>
             @endcan
         </x-slot:actions>
     </x-page-header>
@@ -24,7 +24,7 @@
     @if ($this->plans->isEmpty())
         <x-empty-state icon="target" title="No plans here" description="Create a plan for a day, week, month, quarter or year, then link tasks to it.">
             @can('manage')
-                <button type="button" wire:click="$dispatch('create-plan', { period: '{{ $period }}' })" class="btn btn-primary"><x-icon name="plus" class="size-4" /> New plan</button>
+                <button type="button" wire:click="$dispatch('create-plan', { period: $wire.period })" class="btn btn-primary"><x-icon name="plus" class="size-4" /> New plan</button>
             @endcan
         </x-empty-state>
     @else

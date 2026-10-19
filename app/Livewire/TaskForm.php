@@ -120,14 +120,17 @@ class TaskForm extends Component
     #[Computed]
     public function projects()
     {
-        return Project::active()->orWhere('id', $this->project_id)->orderBy('name')->get(['id', 'name', 'color']);
+        return Project::query()
+            ->where(fn ($q) => $q->where(fn ($q) => $q->active()->visibleTo(auth()->user()))->orWhere('id', $this->project_id))
+            ->orderBy('name')
+            ->get(['id', 'name', 'color']);
     }
 
     #[Computed]
     public function plans()
     {
         return Plan::query()
-            ->where(fn ($q) => $q->whereDate('ends_on', '>=', today())->orWhere('id', $this->plan_id))
+            ->where(fn ($q) => $q->where(fn ($q) => $q->whereDate('ends_on', '>=', today())->visibleTo(auth()->user()))->orWhere('id', $this->plan_id))
             ->when($this->project_id, fn ($q) => $q->where(fn ($q) => $q->whereNull('project_id')->orWhere('project_id', $this->project_id)))
             ->orderBy('starts_on')
             ->get(['id', 'title', 'period', 'starts_on']);
@@ -155,8 +158,8 @@ class TaskForm extends Component
             'description' => ['nullable', 'string', 'max:10000'],
             'status' => ['required', Rule::enum(TaskStatus::class)],
             'priority' => ['required', Rule::enum(TaskPriority::class)],
-            'project_id' => ['nullable', Rule::exists('projects', 'id')],
-            'plan_id' => ['nullable', Rule::exists('plans', 'id')],
+            'project_id' => ['nullable', Rule::in($this->allowedIds(Project::visibleTo($user), $task?->project_id))],
+            'plan_id' => ['nullable', Rule::in($this->allowedIds(Plan::visibleTo($user), $task?->plan_id))],
             'assignee_id' => ['nullable', Rule::exists('users', 'id')->where('is_active', true)],
             'due_at' => ['nullable', 'date'],
             'reminder' => ['nullable', Rule::in([...array_keys(self::REMINDERS), 'custom'])],
@@ -233,6 +236,15 @@ class TaskForm extends Component
 
         $this->storeUploads($task);
         $this->finish('Task updated');
+    }
+
+    /**
+     * Projects or plans the user may file a task under: the ones they can
+     * see, plus whatever the task is already linked to.
+     */
+    protected function allowedIds($query, ?int $current): array
+    {
+        return $query->pluck('id')->push($current)->filter()->map(fn ($id) => (string) $id)->all();
     }
 
     public function deleteAttachment(int $id): void

@@ -13,6 +13,16 @@ class Show extends Component
 {
     public Plan $plan;
 
+    public function mount(): void
+    {
+        Gate::authorize('view', $this->plan);
+    }
+
+    public function hydrate(): void
+    {
+        Gate::authorize('view', $this->plan);
+    }
+
     #[On('plan-saved')]
     #[On('task-saved')]
     public function refresh(): void

@@ -33,10 +33,7 @@ class Index extends Component
         return Project::query()
             ->when($this->archived, fn ($q) => $q->archived(), fn ($q) => $q->active())
             ->when($this->search, fn ($q) => $q->where('name', 'like', "%{$this->search}%"))
-            // Staff see the projects they have work in.
-            ->unless($user->canManage(), fn ($q) => $q->where(fn ($q) => $q
-                ->where('lead_id', $user->id)
-                ->orWhereHas('tasks', fn ($q) => $q->visibleTo($user))))
+            ->visibleTo($user)
             ->with('lead')
             ->withProgress()
             ->orderByDesc($this->archived ? 'archived_at' : 'created_at')

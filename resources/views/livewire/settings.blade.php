@@ -36,7 +36,7 @@
                         @if (settings('logo_path'))
                             <button type="button" wire:click="removeLogo" class="btn btn-ghost text-red-600">Remove</button>
                         @endif
-                        <p class="mt-2 text-xs text-slate-500">PNG, JPG, WebP or SVG, up to 2 MB. Also used as the browser icon.</p>
+                        <p class="mt-2 text-xs text-slate-500">PNG, JPG or WebP, up to 2 MB. Also used as the browser icon.</p>
                         @error('logo') <p class="error">{{ $message }}</p> @enderror
                     </div>
                 </div>

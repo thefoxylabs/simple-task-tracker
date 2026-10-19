@@ -48,6 +48,17 @@ class Board extends Component
     public function mount(?Project $project = null): void
     {
         $this->project = $project?->exists ? $project : null;
+
+        if ($this->project) {
+            Gate::authorize('view', $this->project);
+        }
+    }
+
+    public function hydrate(): void
+    {
+        if ($this->project) {
+            Gate::authorize('view', $this->project);
+        }
     }
 
     #[On('task-saved')]
@@ -171,6 +182,14 @@ class Board extends Component
 
     public function render()
     {
+        // Values arrive from the URL, so only keep ones we recognise.
+        $this->view = in_array($this->view, ['board', 'list'], true) ? $this->view : 'board';
+        $this->period = Period::tryFrom($this->period)?->value ?? '';
+        $this->priority = TaskPriority::tryFrom($this->priority)?->value ?? '';
+        $this->assignee = $this->assignee === 'none' || ctype_digit($this->assignee) ? $this->assignee : '';
+        $this->group = ctype_digit($this->group) ? $this->group : '';
+        $this->projectFilter = $this->projectFilter === 'none' || ctype_digit($this->projectFilter) ? $this->projectFilter : '';
+
         return view('livewire.board', [
             'statuses' => TaskStatus::cases(),
             'priorities' => TaskPriority::cases(),

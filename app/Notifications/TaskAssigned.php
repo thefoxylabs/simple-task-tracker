@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Task;
+use App\Support\Markdown;
 use Illuminate\Notifications\Messages\MailMessage;
 
 class TaskAssigned extends QueuedNotification
@@ -23,9 +24,9 @@ class TaskAssigned extends QueuedNotification
 
         $message = (new MailMessage)
             ->subject('New task: '.$task->title)
-            ->greeting('Hi '.$notifiable->name.',')
-            ->line(($task->creator?->name ?? settings('app_name')).' assigned you a new task.')
-            ->line('**'.$task->title.'**');
+            ->greeting('Hi '.Markdown::escape($notifiable->name).',')
+            ->line(Markdown::escape($task->creator?->name ?? settings('app_name')).' assigned you a new task.')
+            ->line('**'.Markdown::escape($task->title).'**');
 
         return TaskReminder::withDetails($message, $task)
             ->action('View task', route('tasks.show', $task));

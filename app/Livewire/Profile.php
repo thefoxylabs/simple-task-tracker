@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Livewire\Attributes\Title;
@@ -20,6 +21,8 @@ class Profile extends Component
 
     public string $current_password = '';
 
+    public string $email_password = '';
+
     public string $password = '';
 
     public string $password_confirmation = '';
@@ -36,14 +39,23 @@ class Profile extends Component
 
     public function saveProfile(): void
     {
+        $user = auth()->user();
+        $emailChanged = strcasecmp($this->email, $user->email) !== 0;
+
         $data = $this->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore(auth()->id())],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'job_title' => ['nullable', 'string', 'max:100'],
             'phone' => ['nullable', 'string', 'max:50'],
+            // Changing the sign-in email needs the current password.
+            'email_password' => [$emailChanged ? 'required' : 'nullable', $emailChanged ? 'current_password' : 'nullable'],
+        ], [
+            'email_password.required' => 'Enter your current password to change your email address.',
         ]);
 
-        auth()->user()->update(array_map(fn ($v) => $v === '' ? null : $v, $data));
+        unset($data['email_password']);
+        $user->update(array_map(fn ($v) => $v === '' ? null : $v, $data));
+        $this->reset('email_password');
 
         $this->dispatch('notify', message: 'Profile saved');
     }
@@ -56,6 +68,11 @@ class Profile extends Component
         ]);
 
         auth()->user()->update(['password' => $this->password]);
+
+        // Sign out everywhere else, so an old session can't keep using the account.
+        Auth::logoutOtherDevices($this->password);
+        session()->put('password_hash_web', auth()->user()->getAuthPassword());
+
         $this->reset(['current_password', 'password', 'password_confirmation']);
 
         $this->dispatch('notify', message: 'Password updated');

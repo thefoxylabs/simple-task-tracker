@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\EnsureInstalled;
 use App\Http\Middleware\EnsureUserIsActive;
+use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -14,6 +15,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(append: [SecurityHeaders::class]);
+
+        // Only answer to the domain in APP_URL, so emailed links can't be
+        // pointed at another host (ignored when APP_ENV=local).
+        $middleware->trustHosts();
+
         $middleware->alias([
             'installed' => EnsureInstalled::class,
             'active' => EnsureUserIsActive::class,

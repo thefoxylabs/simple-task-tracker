@@ -18,7 +18,7 @@ class Login extends Component
 
     public string $password = '';
 
-    public bool $remember = true;
+    public bool $remember = false;
 
     public function login()
     {
@@ -27,23 +27,29 @@ class Login extends Component
             'password' => ['required', 'string'],
         ]);
 
-        $key = Str::lower($this->email).'|'.request()->ip();
+        // Limit guesses per account (5 per 5 minutes) and per IP address
+        // (20 per minute, to stop one machine trying many accounts).
+        $accountKey = 'login|'.Str::lower($this->email);
+        $ipKey = 'login-ip|'.request()->ip();
 
-        if (RateLimiter::tooManyAttempts($key, 5)) {
-            throw ValidationException::withMessages([
-                'email' => 'Too many attempts. Try again in '.RateLimiter::availableIn($key).' seconds.',
-            ]);
+        foreach ([$accountKey => 5, $ipKey => 20] as $key => $max) {
+            if (RateLimiter::tooManyAttempts($key, $max)) {
+                throw ValidationException::withMessages([
+                    'email' => 'Too many attempts. Try again in '.RateLimiter::availableIn($key).' seconds.',
+                ]);
+            }
         }
 
         $credentials = ['email' => $this->email, 'password' => $this->password, 'is_active' => true];
 
         if (! Auth::attempt($credentials, $this->remember)) {
-            RateLimiter::hit($key);
+            RateLimiter::hit($accountKey, 300);
+            RateLimiter::hit($ipKey, 60);
 
             throw ValidationException::withMessages(['email' => __('auth.failed')]);
         }
 
-        RateLimiter::clear($key);
+        RateLimiter::clear($accountKey);
         session()->regenerate();
 
         return $this->redirectIntended(route('dashboard'));

@@ -31,6 +31,7 @@ class Index extends Component
         $today = today()->toDateString();
 
         return Plan::query()
+            ->visibleTo(auth()->user())
             ->with(['owner', 'group', 'project'])
             ->withProgress()
             ->when(Period::tryFrom($this->period), fn ($q, $period) => $q->where('period', $period))
@@ -44,6 +45,10 @@ class Index extends Component
 
     public function render()
     {
+        // Values arrive from the URL, so only keep ones we recognise.
+        $this->period = Period::tryFrom($this->period)?->value ?? '';
+        $this->when = in_array($this->when, ['current', 'upcoming', 'past'], true) ? $this->when : 'current';
+
         return view('livewire.plans.index', ['periods' => Period::cases()]);
     }
 }

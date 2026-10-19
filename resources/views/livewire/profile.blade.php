@@ -21,6 +21,12 @@
                 <label for="p-phone" class="label">Phone</label>
                 <input wire:model="phone" id="p-phone" type="text" class="input">
             </div>
+            <div class="sm:col-span-2" x-data x-show="$wire.email.toLowerCase() !== @js(strtolower(auth()->user()->email))" x-cloak>
+                <label for="p-email-password" class="label">Current password</label>
+                <input wire:model="email_password" id="p-email-password" type="password" class="input" autocomplete="current-password">
+                <p class="mt-1.5 text-xs text-slate-500">Needed to change the email address you sign in with.</p>
+                @error('email_password') <p class="error">{{ $message }}</p> @enderror
+            </div>
         </div>
         <div class="flex justify-end border-t border-slate-100 px-6 py-4">
             <button type="submit" class="btn btn-primary">Save profile</button>

@@ -19,6 +19,11 @@ class Show extends Component
         Gate::authorize('view', $this->task);
     }
 
+    public function hydrate(): void
+    {
+        Gate::authorize('view', $this->task);
+    }
+
     #[On('task-saved')]
     public function refresh()
     {

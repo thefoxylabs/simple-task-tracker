@@ -38,11 +38,15 @@
             </div>
         </div>
 
-        @if (config('app.setup_token'))
+        @if (\App\Support\SetupToken::required())
             <div>
                 <label for="setup_token" class="label">Setup token</label>
-                <input wire:model="setup_token" id="setup_token" type="password" class="input">
-                <p class="mt-1.5 text-xs text-slate-500">The value of <code>SETUP_TOKEN</code> in your <code>.env</code> file.</p>
+                <input wire:model="setup_token" id="setup_token" type="password" class="input" autocomplete="off">
+                @if (\App\Support\SetupToken::fromEnvironment())
+                    <p class="mt-1.5 text-xs text-slate-500">The value of <code>SETUP_TOKEN</code> in your <code>.env</code> file.</p>
+                @else
+                    <p class="mt-1.5 text-xs text-slate-500">This keeps strangers from claiming your workspace. Get the token by running <code class="rounded bg-slate-100 px-1 py-0.5">php artisan app:setup-token</code> on your server.</p>
+                @endif
                 @error('setup_token') <p class="error">{{ $message }}</p> @enderror
             </div>
         @endif

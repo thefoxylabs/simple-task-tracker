@@ -10,6 +10,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Upgraded to **Laravel 13** (from Laravel 12). Task Tracker now requires **PHP 8.3 or newer**.
 - Laravel Tinker upgraded to version 3, and Guzzle to version 8 (pulled in by Laravel 13).
 
+### Security
+- Fixed a cross-site scripting issue where a crafted `?period=` link on the Plans page could run JavaScript for a manager or admin who clicked "New plan". All values read from the URL are now checked against allowed values.
+- Staff can no longer open project pages or download project files for projects they aren't part of. Every file download now checks access to its task or project.
+- Staff now only see company-wide plans, their group's plans and their own plans.
+- Task, project and plan pages re-check access on every request, not only when first opened.
+- Staff can only file tasks under projects and plans they can see.
+- The setup wizard requires a one-time token in production (`php artisan app:setup-token`), limits wrong guesses, and can't be completed twice by simultaneous requests.
+- Stronger login throttling (per account and per IP address) and throttling for password reset emails.
+- Security headers (no framing, nosniff, referrer policy, HSTS over HTTPS) and trusted hosts based on `APP_URL`.
+- Passwords need at least 10 characters with letters and numbers. Changing your email needs your current password, and changing your password signs out other devices.
+- Task titles and names can no longer add links or formatting to emails.
+- Password reset and invitation jobs are encrypted in the queue, and failed jobs are pruned after a week.
+- Safer download filenames, SVG logos disabled, and session cookies are encrypted and HTTPS-only by default.
+- Docker Compose no longer starts with default database passwords. "Keep me signed in" is now off by default.
+
 ### Added
 - **Queued emails.** Assignment emails, reminders, invitations and password resets are sent in the background through the database queue, with three automatic retries. The scheduler processes the queue, so no extra worker is needed (`QUEUE_WORKER_IN_SCHEDULER`).
 - Project homepage on GitHub Pages, with a screenshot lightbox and Foxy Labs installation and hosting packages: Basic install (from $250), Full setup ($500), Managed hosting (from $99/month) and maintenance plans (from $49/month).

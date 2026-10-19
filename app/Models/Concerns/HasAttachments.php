@@ -34,7 +34,7 @@ trait HasAttachments
             'user_id' => $user->id,
             'disk' => $disk,
             'path' => $path,
-            'name' => $file->getClientOriginalName(),
+            'name' => Uploads::cleanName($file->getClientOriginalName()),
             'mime_type' => $file->getMimeType(),
             'size' => $file->getSize(),
         ]);

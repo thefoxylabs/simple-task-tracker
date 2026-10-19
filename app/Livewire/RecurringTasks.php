@@ -7,6 +7,7 @@ use App\Enums\TaskPriority;
 use App\Models\Project;
 use App\Models\RecurringTask;
 use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
@@ -40,6 +41,11 @@ class RecurringTasks extends Component
     public string $due_time = '17:00';
 
     public string $reminder = '60';
+
+    public function boot(): void
+    {
+        Gate::authorize('manage');
+    }
 
     #[Computed]
     public function schedules()

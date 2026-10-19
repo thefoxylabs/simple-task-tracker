@@ -4,6 +4,8 @@ namespace App\Support;
 
 use App\Models\Attachment;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -27,12 +29,27 @@ class Uploads
 
         if (config("filesystems.disks.{$attachment->disk}.driver") === 's3') {
             return redirect()->away($disk->temporaryUrl($attachment->path, now()->addMinutes(5), [
-                'ResponseContentDisposition' => 'attachment; filename="'.addslashes($attachment->name).'"',
+                'ResponseContentDisposition' => HeaderUtils::makeDisposition('attachment', $attachment->name, self::asciiName($attachment->name)),
             ]));
         }
 
         abort_unless($disk->exists($attachment->path), 404);
 
         return $disk->download($attachment->path, $attachment->name);
+    }
+
+    /** A plain-ASCII fallback filename for older browsers. */
+    public static function asciiName(string $name): string
+    {
+        return Str::ascii(str_replace(['%', '/', '\\', '"'], '', $name)) ?: 'download';
+    }
+
+    /** Remove control characters and path parts from an uploaded file's name. */
+    public static function cleanName(string $name): string
+    {
+        $name = basename(str_replace('\\', '/', $name));
+        $name = preg_replace('/[\x00-\x1F\x7F]/u', '', $name) ?? '';
+
+        return Str::limit(trim($name), 200, '') ?: 'file';
     }
 }

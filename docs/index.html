@@ -593,7 +593,7 @@ npm ci &amp;&amp; npm run build</pre></div>
                     <div class="code"><button class="copy">Copy</button><pre>git clone https://github.com/thefoxylabs/simple-task-tracker.git task-tracker
 cd task-tracker
 cp .env.example .env
-<span class="c"># set APP_KEY, APP_URL, SMTP and R2 in .env</span>
+<span class="c"># set APP_KEY, APP_URL, DB_PASSWORD, DB_ROOT_PASSWORD, SMTP and R2 in .env</span>
 docker compose up -d</pre></div>
                     <p style="margin-top: 14px; font-size: 14px">Then open <code>http://localhost:8080</code>.</p>
                     <h3 style="margin-top: 28px">🧪 Try it with demo data</h3>
@@ -607,7 +607,7 @@ docker compose up -d</pre></div>
                 <div class="req"><b>Node.js 20+</b>only to build the CSS and JS</div>
                 <div class="req"><b>SMTP + R2 bucket</b>for emails and file uploads</div>
             </div>
-            <p class="note">Full instructions are in the <a href="https://github.com/thefoxylabs/simple-task-tracker#readme" style="color: var(--brand); font-weight: 600">README</a>. Tip: set <code>SETUP_TOKEN</code> in <code>.env</code> so only you can create the first admin. Prefer us to do it? <a href="#help" style="color: var(--brand); font-weight: 600">Installation from $250, or hosting from $99/month</a>.</p>
+            <p class="note">On first visit, the setup wizard asks for a one-time token: run <code>php artisan app:setup-token</code> on the server (Docker prints it in the log). Full instructions are in the <a href="https://github.com/thefoxylabs/simple-task-tracker#readme" style="color: var(--brand); font-weight: 600">README</a>. Prefer us to do it? <a href="#help" style="color: var(--brand); font-weight: 600">Installation from $250, or hosting from $99/month</a>.</p>
         </div>
     </section>
 

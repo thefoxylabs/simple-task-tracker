@@ -90,7 +90,7 @@ class Settings extends Component
             'tagline' => ['nullable', 'string', 'max:160'],
             'primary_color' => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
             'footer_text' => ['nullable', 'string', 'max:200'],
-            'logo' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp,svg', 'max:2048'],
+            'logo' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:2048'],
         ]);
 
         unset($data['logo']);
@@ -210,6 +210,8 @@ class Settings extends Component
 
     public function render()
     {
+        $this->tab = in_array($this->tab, ['branding', 'general', 'mail'], true) ? $this->tab : 'branding';
+
         return view('livewire.settings', [
             'hasStoredPassword' => filled(settings('mail_password')),
             'envMailer' => config('mail.default'),

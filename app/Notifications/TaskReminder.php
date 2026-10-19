@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Task;
+use App\Support\Markdown;
 use Illuminate\Notifications\Messages\MailMessage;
 
 class TaskReminder extends QueuedNotification
@@ -27,8 +28,8 @@ class TaskReminder extends QueuedNotification
 
         $message = (new MailMessage)
             ->subject('Reminder: '.$task->title)
-            ->greeting('Hi '.$notifiable->name.',')
-            ->line('This is a reminder that **'.$task->title.'** '.$when.'.');
+            ->greeting('Hi '.Markdown::escape($notifiable->name).',')
+            ->line('This is a reminder that **'.Markdown::escape($task->title).'** '.$when.'.');
 
         return self::withDetails($message, $task)
             ->action('Open task', route('tasks.show', $task));
@@ -37,7 +38,7 @@ class TaskReminder extends QueuedNotification
     public static function withDetails(MailMessage $message, Task $task): MailMessage
     {
         if ($task->project) {
-            $message->line('Project: '.$task->project->name);
+            $message->line('Project: '.Markdown::escape($task->project->name));
         }
 
         $message->line('Priority: '.$task->priority->label());

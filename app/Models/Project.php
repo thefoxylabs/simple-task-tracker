@@ -42,6 +42,18 @@ class Project extends Model
         return $this->belongsTo(User::class, 'lead_id');
     }
 
+    /** Staff only see projects they lead or have tasks in. */
+    public function scopeVisibleTo(Builder $query, User $user): void
+    {
+        if ($user->canManage()) {
+            return;
+        }
+
+        $query->where(fn (Builder $q) => $q
+            ->where('lead_id', $user->id)
+            ->orWhereHas('tasks', fn (Builder $q) => $q->visibleTo($user)));
+    }
+
     public function scopeActive(Builder $query): void
     {
         $query->whereNull('archived_at');

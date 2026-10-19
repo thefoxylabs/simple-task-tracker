@@ -49,7 +49,7 @@ class Dashboard extends Component
             : collect();
 
         $projects = Project::active()
-            ->unless($user->canManage(), fn ($q) => $q->whereHas('tasks', fn ($q) => $q->visibleTo($user)))
+            ->visibleTo($user)
             ->withProgress()
             ->latest('updated_at')
             ->limit(5)
@@ -58,10 +58,7 @@ class Dashboard extends Component
         $plans = Plan::query()
             ->whereDate('starts_on', '<=', today())
             ->whereDate('ends_on', '>=', today())
-            ->unless($user->canManage(), fn ($q) => $q->where(fn ($q) => $q
-                ->where('user_id', $user->id)
-                ->orWhere(fn ($q) => $q->whereNotNull('staff_group_id')->where('staff_group_id', $user->staff_group_id))
-                ->orWhere(fn ($q) => $q->whereNull('user_id')->whereNull('staff_group_id'))))
+            ->visibleTo($user)
             ->withProgress()
             ->orderBy('ends_on')
             ->limit(5)

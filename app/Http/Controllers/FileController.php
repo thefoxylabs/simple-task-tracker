@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attachment;
-use App\Models\Task;
 use App\Support\Uploads;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
@@ -28,9 +27,9 @@ class FileController extends Controller
 
     public function attachment(Attachment $attachment): Response
     {
-        if ($attachment->attachable instanceof Task) {
-            Gate::authorize('view', $attachment->attachable);
-        }
+        // Only people who can see the task or project can download its files.
+        $parent = $attachment->attachable;
+        abort_unless($parent && Gate::allows('view', $parent), 403);
 
         return Uploads::download($attachment);
     }

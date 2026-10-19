@@ -16,7 +16,7 @@ Route::middleware('installed')->group(function () {
         Route::livewire('/reset-password/{token}', Livewire\Auth\ResetPassword::class)->name('password.reset');
     });
 
-    Route::middleware(['auth', 'active'])->group(function () {
+    Route::middleware(['auth', 'auth.session', 'active'])->group(function () {
         Route::post('/logout', LogoutController::class)->name('logout');
 
         Route::livewire('/', Livewire\Dashboard::class)->name('dashboard');

@@ -72,6 +72,8 @@ class Index extends Component
 
     public function render()
     {
+        $this->group = $this->group === 'none' || ctype_digit($this->group) ? $this->group : '';
+
         return view('livewire.staff.index', ['roles' => Role::cases()]);
     }
 }

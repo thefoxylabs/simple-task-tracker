@@ -2,9 +2,11 @@
 
 namespace App\Notifications;
 
+use App\Support\Markdown;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class StaffInvitation extends QueuedNotification
+class StaffInvitation extends QueuedNotification implements ShouldBeEncrypted
 {
     public function __construct(public string $token, public string $invitedBy)
     {
@@ -22,8 +24,8 @@ class StaffInvitation extends QueuedNotification
 
         return (new MailMessage)
             ->subject('You\'ve been invited to '.settings('app_name'))
-            ->greeting('Welcome, '.$notifiable->name.'!')
-            ->line($this->invitedBy.' created an account for you on '.settings('app_name').'.')
+            ->greeting('Welcome, '.Markdown::escape($notifiable->name).'!')
+            ->line(Markdown::escape($this->invitedBy).' created an account for you on '.settings('app_name').'.')
             ->line('Choose a password to get started. Your email address is '.$notifiable->email.'.')
             ->action('Set your password', $url)
             ->line('This link expires in '.config('auth.passwords.users.expire').' minutes. If it expires, use "Forgot password" on the sign-in page.');
