@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+- Upgraded to **Laravel 13** (from Laravel 12). Task Tracker now requires **PHP 8.3 or newer**.
+- Laravel Tinker upgraded to version 3, and Guzzle to version 8 (pulled in by Laravel 13).
+
 ### Added
 - Project homepage on GitHub Pages, with a screenshot lightbox and Foxy Labs installation and hosting packages: Basic install (from $250), Full setup ($500), Managed hosting (from $99/month) and maintenance plans (from $49/month).
 

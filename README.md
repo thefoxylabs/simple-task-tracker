@@ -7,7 +7,7 @@
 🌐 **Website:** https://thefoxylabs.github.io/simple-task-tracker/
 Download it, host it on your own server and brand it as your own: name, logo and colours are all set from the admin **Settings** page.
 
-Built with **Laravel 12**, **Livewire 4** and **Tailwind CSS 4**.
+Built with **Laravel 13**, **Livewire 4** and **Tailwind CSS 4**.
 
 ![Board](docs/screenshots/board.png)
 
@@ -56,7 +56,7 @@ Built with **Laravel 12**, **Livewire 4** and **Tailwind CSS 4**.
 
 ## Requirements
 
-- PHP 8.2+ with the `intl`, `mbstring`, `pdo_mysql` (or `pdo_sqlite`), `fileinfo` and `zip` extensions
+- PHP 8.3+ with the `intl`, `mbstring`, `pdo_mysql` (or `pdo_sqlite`), `fileinfo` and `zip` extensions
 - Composer 2
 - Node.js 20+ (only to build the CSS/JS)
 - MySQL 8 / MariaDB 10.6+ (recommended) or SQLite
