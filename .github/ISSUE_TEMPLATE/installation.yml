@@ -1,12 +1,12 @@
 name: Installation help from Foxy Labs
-description: Ask Foxy Labs to install Task Tracker for you (one-time setup fee of $100)
+description: Ask Foxy Labs to install Task Tracker for you (one-time setup fee of $250)
 title: "Installation request: "
 labels: [installation]
 body:
   - type: markdown
     attributes:
       value: |
-        Foxy Labs can install and configure Task Tracker for you for a **one-time setup fee of $100**.
+        Foxy Labs can install and configure Task Tracker for you for a **one-time setup fee of $250**.
         Ongoing maintenance and support can be agreed afterwards.
 
         ⚠️ This request is public. **Do not** include passwords, API keys or server logins here. We'll collect those privately.

@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 ### Added
-- Project homepage on GitHub Pages, with a screenshot lightbox and a way to request professional installation from Foxy Labs.
+- Project homepage on GitHub Pages, with a screenshot lightbox and a way to request professional installation from Foxy Labs (one-time $250 setup fee).
 
 ## [1.0.0] - 2026-10-19
 

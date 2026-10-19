@@ -174,7 +174,7 @@ vendor/bin/pint
 
 ## Need help installing?
 
-**Foxy Labs** can install and configure Task Tracker for you for a **one-time setup fee of $100**. This covers your server, domain and HTTPS, database, email (SMTP), file storage, branding and the reminder scheduler. Ongoing maintenance and support can be agreed afterwards.
+**Foxy Labs** can install and configure Task Tracker for you for a **one-time setup fee of $250**. This covers your server, domain and HTTPS, database, email (SMTP), file storage, branding and the reminder scheduler. Ongoing maintenance and support can be agreed afterwards.
 
 Get in touch:
 
