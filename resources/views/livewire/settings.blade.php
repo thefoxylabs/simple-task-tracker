@@ -1,7 +1,7 @@
 <div>
     <x-page-header title="Settings" description="Make this workspace your own." />
 
-    <div class="mb-6 flex flex-wrap gap-1 rounded-lg bg-slate-100 p-1 sm:inline-flex">
+    <div class="segmented mb-6 sm:inline-flex">
         @foreach (['branding' => ['Branding', 'paint'], 'general' => ['General', 'cog'], 'mail' => ['Email (SMTP)', 'mail']] as $key => [$label, $icon])
             <button type="button" wire:click="$set('tab', '{{ $key }}')" class="{{ $tab === $key ? 'tab tab-active' : 'tab' }} flex items-center gap-1.5">
                 <x-icon :name="$icon" class="size-4" /> {{ $label }}

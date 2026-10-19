@@ -5,7 +5,7 @@
                 <div class="space-y-5 p-6">
                     <div>
                         <p class="label">Planning period</p>
-                        <div class="grid grid-cols-5 gap-1 rounded-lg bg-slate-100 p-1">
+                        <div class="segmented sm:grid sm:grid-cols-5">
                             @foreach (\App\Enums\Period::cases() as $p)
                                 <button type="button" wire:click="$set('period', '{{ $p->value }}')" class="{{ $period === $p->value ? 'tab tab-active' : 'tab' }} text-center">{{ $p->label() }}</button>
                             @endforeach
@@ -13,7 +13,7 @@
                     </div>
                     <div>
                         <label for="plan-date" class="label">Which {{ \App\Enums\Period::tryFrom($period)?->noun() ?? 'period' }}?</label>
-                        <input wire:model.live="date" id="plan-date" type="date" class="input">
+                        <x-date-picker wire:model.live="date" id="plan-date" :clearable="false" />
                         @if ($this->range)
                             <p class="mt-1.5 flex items-center gap-1.5 text-sm text-brand-700"><x-icon name="calendar" class="size-4" /> {{ $this->range }}</p>
                         @endif

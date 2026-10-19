@@ -57,6 +57,27 @@ function enhance(root = document) {
 const refresh = (root) => setTimeout(() => enhance(root));
 
 function registerHooks() {
+    // Leave Select2's own markup alone while Livewire updates the page: only
+    // the <option>s are refreshed, so open dropdowns aren't torn down.
+    window.Livewire.hook('morph.updating', ({ el, childrenOnly }) => {
+        if (el.tagName === 'SELECT' && el.classList.contains('select2-hidden-accessible')) {
+            childrenOnly();
+        }
+    });
+
+    window.Livewire.hook('morph.removing', ({ el, skip }) => {
+        if (! el.classList?.contains('select2-container')) {
+            return;
+        }
+
+        const select = el.previousElementSibling;
+        const isDropdown = el.classList.contains('select2-container--open') && ! select?.matches('select');
+
+        if (isDropdown || select?.classList.contains('select2-hidden-accessible')) {
+            skip();
+        }
+    });
+
     window.Livewire.hook('morphed', ({ el }) => refresh(el));
 }
 

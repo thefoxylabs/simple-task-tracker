@@ -10,7 +10,7 @@
         </x-slot:actions>
     </x-page-header>
 
-    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div class="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         <x-stat label="Open tasks" :value="$stats['open']" icon="list" />
         <x-stat label="Due today" :value="$stats['today']" icon="clock" tone="amber" />
         <x-stat label="Overdue" :value="$stats['overdue']" icon="alert" tone="red" />

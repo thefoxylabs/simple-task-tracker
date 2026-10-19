@@ -21,6 +21,8 @@ Built with **Laravel 12**, **Livewire 4** and **Tailwind CSS 4**.
 - **Staff and groups.** Add staff (with an email invitation to set their password), organise them into groups such as departments, and deactivate leavers.
 - **Attachments.** Upload files to tasks (for example, proof of completion) and to projects. Files are stored in **Cloudflare R2** by default, or locally or in S3.
 - **White-label branding.** App name, company name, logo, brand colour, sign-in tagline and footer text.
+- **A custom date and time picker.** A calendar with month and year views, shortcuts (Today, Tomorrow, Next Monday, In a week), a scrollable time picker with common times, and keyboard support. On phones it opens as a bottom sheet.
+- **Works on phones.** Every page and form is responsive: swipeable board columns, card layouts instead of tables, and tab rows that scroll sideways.
 - **Searchable dropdowns.** Every dropdown uses Select2, so you can type to find people, projects, plans or time zones.
 - **SMTP settings in the app.** Configure mail from the Settings page and send a test email, or use `.env`.
 
@@ -47,6 +49,8 @@ Built with **Laravel 12**, **Livewire 4** and **Tailwind CSS 4**.
 | ![Task](docs/screenshots/task.png) | ![Staff](docs/screenshots/staff.png) |
 | **Plans** | **Branding settings** |
 | ![Plans](docs/screenshots/plans.png) | ![Settings](docs/screenshots/settings.png) |
+| **Date and time picker** | **On a phone** |
+| ![Date picker](docs/screenshots/date-picker.png) | ![Mobile](docs/screenshots/mobile.png) |
 
 ## Requirements
 

@@ -6,23 +6,62 @@
         </x-slot:actions>
     </x-page-header>
 
-    <div class="mb-5 flex flex-wrap items-center gap-2">
+    <div class="mb-5 flex flex-col gap-2 xl:flex-row xl:items-center">
         <x-period-nav />
-        <div class="relative w-full sm:ml-auto sm:w-56">
-            <x-icon name="search" class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-slate-400" />
-            <input wire:model.live.debounce.300ms="search" type="search" placeholder="Search staff…" class="input pl-9">
+        <div class="grid grid-cols-[1fr_auto] gap-2 sm:flex sm:items-center xl:ml-auto">
+            <div class="relative col-span-2 sm:w-56">
+                <x-icon name="search" class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-slate-400" />
+                <input wire:model.live.debounce.300ms="search" type="search" placeholder="Search staff…" class="input pl-9">
+            </div>
+            <div class="min-w-0 sm:w-44">
+                <select wire:model.live="group" class="input">
+                    <option value="">All groups</option>
+                    <option value="none">No group</option>
+                    @foreach ($this->groups as $g)<option value="{{ $g->id }}">{{ $g->name }}</option>@endforeach
+                </select>
+            </div>
+            <label class="flex items-center gap-2 px-1 text-sm whitespace-nowrap text-slate-600">
+                <input wire:model.live="inactive" type="checkbox" class="size-4 rounded border-slate-300"> Inactive
+            </label>
         </div>
-        <select wire:model.live="group" class="input w-auto">
-            <option value="">All groups</option>
-            <option value="none">No group</option>
-            @foreach ($this->groups as $g)<option value="{{ $g->id }}">{{ $g->name }}</option>@endforeach
-        </select>
-        <label class="flex items-center gap-2 text-sm text-slate-600">
-            <input wire:model.live="inactive" type="checkbox" class="size-4 rounded border-slate-300 text-brand-600 focus:ring-brand-600"> Inactive
-        </label>
     </div>
 
-    <div class="card overflow-hidden">
+    {{-- Phones: one card per person --}}
+    <ul class="space-y-2 md:hidden">
+        @forelse ($this->staff as $member)
+            <li class="card p-4" wire:key="m-staff-{{ $member->id }}">
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('staff.show', ['user' => $member, 'period' => $period, 'date' => $date ?: null]) }}" wire:navigate class="flex min-w-0 flex-1 items-center gap-3">
+                        <x-avatar :user="$member" size="size-10" class="ring-0" />
+                        <span class="min-w-0">
+                            <span class="block truncate font-medium text-slate-900">{{ $member->name }}</span>
+                            <span class="block truncate text-xs text-slate-500">{{ $member->job_title ?: $member->email }}</span>
+                        </span>
+                    </a>
+                    @can('manage-user', $member)
+                        <button type="button" wire:click="$dispatch('edit-staff', { id: {{ $member->id }} })" class="btn btn-ghost px-2 py-1"><x-icon name="pencil" class="size-4" /></button>
+                    @endcan
+                    <button type="button" wire:click="$dispatch('create-task', { assigneeId: {{ $member->id }} })" class="btn btn-ghost px-2 py-1"><x-icon name="plus" class="size-4" /></button>
+                </div>
+                <div class="mt-3 flex flex-wrap items-center gap-1.5">
+                    <span class="badge {{ $member->role->badgeClasses() }}">{{ $member->role->label() }}</span>
+                    @if ($member->group)
+                        <span class="badge bg-white text-slate-700 ring-slate-200"><span class="size-1.5 rounded-full" style="background-color: {{ $member->group->color }}"></span>{{ $member->group->name }}</span>
+                    @endif
+                </div>
+                <dl class="mt-3 grid grid-cols-4 gap-2 rounded-lg bg-slate-50 p-2 text-center">
+                    <div><dt class="text-[0.65rem] text-slate-500 uppercase">Tasks</dt><dd class="font-semibold text-slate-900">{{ $member->period_tasks_count }}</dd></div>
+                    <div><dt class="text-[0.65rem] text-slate-500 uppercase">Done</dt><dd class="font-semibold text-emerald-700">{{ $member->period_done_count }}</dd></div>
+                    <div><dt class="text-[0.65rem] text-slate-500 uppercase">Open</dt><dd class="font-semibold text-slate-700">{{ $member->open_count }}</dd></div>
+                    <div><dt class="text-[0.65rem] text-slate-500 uppercase">Late</dt><dd class="font-semibold {{ $member->overdue_count ? 'text-red-600' : 'text-slate-400' }}">{{ $member->overdue_count }}</dd></div>
+                </dl>
+            </li>
+        @empty
+            <li class="card px-5 py-12 text-center text-sm text-slate-500">No staff found.</li>
+        @endforelse
+    </ul>
+
+    <div class="card hidden overflow-hidden md:block">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-200 text-sm">
                 <thead class="bg-slate-50 text-left text-xs font-semibold tracking-wide text-slate-500 uppercase">

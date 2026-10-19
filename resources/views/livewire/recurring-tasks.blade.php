@@ -10,7 +10,39 @@
             <button type="button" wire:click="create" class="btn btn-primary"><x-icon name="plus" class="size-4" /> New schedule</button>
         </x-empty-state>
     @else
-        <div class="card overflow-hidden">
+        {{-- Phones: one card per schedule --}}
+        <ul class="space-y-2 md:hidden">
+            @foreach ($this->schedules as $schedule)
+                <li class="card p-4 {{ $schedule->is_active ? '' : 'opacity-60' }}" wire:key="m-rt-{{ $schedule->id }}">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="font-medium text-slate-900">{{ $schedule->title }}</p>
+                            <p class="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
+                                <span class="badge {{ $schedule->priority->badgeClasses() }}">{{ $schedule->priority->label() }}</span>
+                                <span class="inline-flex items-center gap-1"><x-icon name="repeat" class="size-3.5" /> {{ $schedule->frequency->label() }} at {{ \Carbon\Carbon::parse($schedule->due_time)->format('g:i A') }}</span>
+                            </p>
+                        </div>
+                        <x-avatar :user="$schedule->assignee" size="size-7" />
+                    </div>
+                    <div class="mt-3 flex items-center justify-between gap-2 border-t border-slate-100 pt-3 text-xs text-slate-500">
+                        <span>
+                            @if (! $schedule->is_active) Paused
+                            @elseif ($schedule->isFinished()) Finished
+                            @else Next: {{ $schedule->next_run_on->format('D, j M') }}
+                            @endif
+                            · {{ $schedule->tasks_count }} {{ \Illuminate\Support\Str::plural('task', $schedule->tasks_count) }}
+                        </span>
+                        <span class="flex gap-1">
+                            <button type="button" wire:click="toggle({{ $schedule->id }})" class="btn btn-ghost px-2 py-1 text-xs">{{ $schedule->is_active ? 'Pause' : 'Resume' }}</button>
+                            <button type="button" wire:click="edit({{ $schedule->id }})" class="btn btn-ghost px-2 py-1"><x-icon name="pencil" class="size-4" /></button>
+                            <button type="button" wire:click="delete({{ $schedule->id }})" wire:confirm="Delete this schedule? Tasks already created are kept." class="btn btn-ghost px-2 py-1 text-red-600"><x-icon name="trash" class="size-4" /></button>
+                        </span>
+                    </div>
+                </li>
+            @endforeach
+        </ul>
+
+        <div class="card hidden overflow-hidden md:block">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-slate-200 text-sm">
                     <thead class="bg-slate-50 text-left text-xs font-semibold tracking-wide text-slate-500 uppercase">
@@ -75,7 +107,7 @@
                     </div>
                     <div>
                         <p class="label">Repeats</p>
-                        <div class="grid grid-cols-5 gap-1 rounded-lg bg-slate-100 p-1">
+                        <div class="segmented sm:grid sm:grid-cols-5">
                             @foreach (\App\Enums\Period::cases() as $p)
                                 <button type="button" wire:click="$set('frequency', '{{ $p->value }}')" class="{{ $frequency === $p->value ? 'tab tab-active' : 'tab' }} text-center">{{ $p->label() }}</button>
                             @endforeach
@@ -98,17 +130,17 @@
                         </div>
                         <div>
                             <label for="rt-start" class="label">{{ $editingId ? 'Next task on' : 'First task on' }}</label>
-                            <input wire:model="starts_on" id="rt-start" type="date" class="input">
+                            <x-date-picker wire:model="starts_on" id="rt-start" :clearable="false" />
                             @error('starts_on') <p class="error">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label for="rt-end" class="label">Stop after <span class="font-normal text-slate-400">(optional)</span></label>
-                            <input wire:model="ends_on" id="rt-end" type="date" class="input">
+                            <x-date-picker wire:model="ends_on" id="rt-end" placeholder="Never" />
                             @error('ends_on') <p class="error">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label for="rt-time" class="label">Deadline time</label>
-                            <input wire:model="due_time" id="rt-time" type="time" class="input">
+                            <x-date-picker wire:model="due_time" id="rt-time" mode="time" :clearable="false" />
                             @error('due_time') <p class="error">{{ $message }}</p> @enderror
                         </div>
                         <div>

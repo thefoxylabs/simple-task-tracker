@@ -32,7 +32,7 @@
                                 <div class="grid gap-4 sm:grid-cols-2">
                                     <div>
                                         <label for="task-due" class="label flex items-center gap-1.5"><x-icon name="clock" class="size-4 text-slate-400" /> Deadline</label>
-                                        <input wire:model.live="due_at" id="task-due" type="datetime-local" class="input">
+                                        <x-date-picker wire:model.live="due_at" id="task-due" mode="datetime" placeholder="No deadline" />
                                         @error('due_at') <p class="error">{{ $message }}</p> @enderror
                                     </div>
                                     <div>
@@ -50,7 +50,7 @@
                                 @if ($reminder === 'custom')
                                     <div class="mt-4">
                                         <label for="task-remind-at" class="label">Send reminder at</label>
-                                        <input wire:model="remind_at" id="task-remind-at" type="datetime-local" class="input">
+                                        <x-date-picker wire:model="remind_at" id="task-remind-at" mode="datetime" default-time="09:00" />
                                         @error('remind_at') <p class="error">{{ $message }}</p> @enderror
                                     </div>
                                 @endif

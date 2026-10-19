@@ -7,14 +7,14 @@
         </x-slot:actions>
     </x-page-header>
 
-    <div class="mb-6 flex flex-wrap items-center gap-2">
-        <div class="flex flex-wrap rounded-lg bg-slate-100 p-1">
+    <div class="mb-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+        <div class="segmented w-full sm:w-auto">
             <button type="button" wire:click="$set('period', '')" class="{{ $period === '' ? 'tab tab-active' : 'tab' }}">All</button>
             @foreach ($periods as $p)
                 <button type="button" wire:click="$set('period', '{{ $p->value }}')" class="{{ $period === $p->value ? 'tab tab-active' : 'tab' }}">{{ $p->label() }}</button>
             @endforeach
         </div>
-        <div class="flex rounded-lg bg-slate-100 p-1">
+        <div class="segmented">
             @foreach (['current' => 'Current', 'upcoming' => 'Upcoming', 'past' => 'Past'] as $key => $label)
                 <button type="button" wire:click="$set('when', '{{ $key }}')" class="{{ $when === $key ? 'tab tab-active' : 'tab' }}">{{ $label }}</button>
             @endforeach

@@ -82,7 +82,11 @@
                 <x-icon name="menu" />
                 <span class="sr-only">Open menu</span>
             </button>
-            @include('partials.brand')
+            <div class="min-w-0 flex-1">@include('partials.brand')</div>
+            <button type="button" x-on:click="$dispatch('create-task')" class="flex size-9 items-center justify-center rounded-lg bg-brand-600 text-white shadow-sm">
+                <x-icon name="plus" class="size-5" />
+                <span class="sr-only">New task</span>
+            </button>
         </header>
 
         <main class="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">

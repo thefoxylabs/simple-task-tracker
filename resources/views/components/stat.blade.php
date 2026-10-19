@@ -8,12 +8,12 @@
         'emerald' => 'bg-emerald-50 text-emerald-600',
     ];
 @endphp
-<div {{ $attributes->merge(['class' => 'card flex items-center gap-4 p-5']) }}>
-    <div class="flex size-11 items-center justify-center rounded-xl {{ $tones[$tone] }}">
-        <x-icon :name="$icon" class="size-6" />
+<div {{ $attributes->merge(['class' => 'card flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:gap-4 sm:p-5']) }}>
+    <div class="flex size-9 shrink-0 items-center justify-center rounded-xl sm:size-11 {{ $tones[$tone] }}">
+        <x-icon :name="$icon" class="size-5 sm:size-6" />
     </div>
-    <div>
-        <p class="text-sm text-slate-500">{{ $label }}</p>
-        <p class="text-2xl font-bold tracking-tight text-slate-900">{{ $value }}</p>
+    <div class="min-w-0">
+        <p class="text-xs text-slate-500 sm:text-sm">{{ $label }}</p>
+        <p class="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">{{ $value }}</p>
     </div>
 </div>

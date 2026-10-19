@@ -36,11 +36,11 @@
                         </div>
                         <div>
                             <label for="project-start" class="label">Start date</label>
-                            <input wire:model="starts_on" id="project-start" type="date" class="input">
+                            <x-date-picker wire:model="starts_on" id="project-start" />
                         </div>
                         <div>
                             <label for="project-due" class="label">Due date</label>
-                            <input wire:model="due_on" id="project-due" type="date" class="input">
+                            <x-date-picker wire:model="due_on" id="project-due" />
                             @error('due_on') <p class="error">{{ $message }}</p> @enderror
                         </div>
                     </div>

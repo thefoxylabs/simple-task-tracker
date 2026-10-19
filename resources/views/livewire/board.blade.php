@@ -68,68 +68,108 @@
     @endif
 
     {{-- Filters --}}
-    <div class="mb-5 flex flex-wrap items-center gap-2">
-        <div class="relative w-full sm:w-64">
-            <x-icon name="search" class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-slate-400" />
-            <input wire:model.live.debounce.300ms="search" type="search" placeholder="Search tasks…" class="input pl-9">
+    <div class="mb-5 space-y-2">
+        <div class="flex flex-col gap-2 lg:flex-row lg:items-center">
+            <div class="relative w-full lg:w-64">
+                <x-icon name="search" class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-slate-400" />
+                <input wire:model.live.debounce.300ms="search" type="search" placeholder="Search tasks…" class="input pl-9">
+            </div>
+
+            <div class="flex min-w-0 flex-1 items-center gap-2">
+                <div class="segmented min-w-0 flex-1 lg:flex-none">
+                    <button type="button" wire:click="$set('period', '')" class="{{ $period === '' ? 'tab tab-active' : 'tab' }}">All</button>
+                    @foreach ($periods as $p)
+                        <button type="button" wire:click="$set('period', '{{ $p->value }}')" class="{{ $period === $p->value ? 'tab tab-active' : 'tab' }}">
+                            {{ $p === \App\Enums\Period::Daily ? 'Today' : 'This '.$p->noun() }}
+                        </button>
+                    @endforeach
+                </div>
+
+                <div class="segmented shrink-0 lg:ml-auto">
+                    <button type="button" wire:click="$set('view', 'board')" title="Board view" class="{{ $view === 'board' ? 'tab tab-active' : 'tab' }} flex items-center gap-1.5"><x-icon name="board" class="size-4" /> <span class="hidden sm:inline">Board</span></button>
+                    <button type="button" wire:click="$set('view', 'list')" title="List view" class="{{ $view === 'list' ? 'tab tab-active' : 'tab' }} flex items-center gap-1.5"><x-icon name="list" class="size-4" /> <span class="hidden sm:inline">List</span></button>
+                </div>
+            </div>
         </div>
 
-        <div class="flex rounded-lg bg-slate-100 p-1">
-            <button type="button" wire:click="$set('period', '')" class="{{ $period === '' ? 'tab tab-active' : 'tab' }}">All</button>
-            @foreach ($periods as $p)
-                <button type="button" wire:click="$set('period', '{{ $p->value }}')" class="{{ $period === $p->value ? 'tab tab-active' : 'tab' }}">
-                    {{ $p === \App\Enums\Period::Daily ? 'Today' : 'This '.$p->noun() }}
-                </button>
-            @endforeach
-        </div>
+        <div class="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
+            @can('manage')
+                <div class="min-w-0 sm:w-48">
+                    <select wire:model.live="assignee" class="input">
+                        <option value="">Everyone</option>
+                        <option value="none">Unassigned</option>
+                        @foreach ($this->people as $person)
+                            <option value="{{ $person->id }}">{{ $person->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                @if ($this->groups->isNotEmpty())
+                    <div class="min-w-0 sm:w-44">
+                        <select wire:model.live="group" class="input">
+                            <option value="">All groups</option>
+                            @foreach ($this->groups as $g)
+                                <option value="{{ $g->id }}">{{ $g->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
+            @endcan
 
-        @can('manage')
-            <select wire:model.live="assignee" class="input w-auto">
-                <option value="">Everyone</option>
-                <option value="none">Unassigned</option>
-                @foreach ($this->people as $person)
-                    <option value="{{ $person->id }}">{{ $person->name }}</option>
-                @endforeach
-            </select>
-            @if ($this->groups->isNotEmpty())
-                <select wire:model.live="group" class="input w-auto">
-                    <option value="">All groups</option>
-                    @foreach ($this->groups as $g)
-                        <option value="{{ $g->id }}">{{ $g->name }}</option>
+            @unless ($project)
+                <div class="min-w-0 sm:w-48">
+                    <select wire:model.live="projectFilter" class="input">
+                        <option value="">All projects</option>
+                        <option value="none">No project</option>
+                        @foreach ($this->projects as $p)
+                            <option value="{{ $p->id }}">{{ $p->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            @endunless
+
+            <div class="min-w-0 sm:w-40">
+                <select wire:model.live="priority" class="input">
+                    <option value="">Any priority</option>
+                    @foreach ($priorities as $p)
+                        <option value="{{ $p->value }}">{{ $p->label() }}</option>
                     @endforeach
                 </select>
+            </div>
+
+            @if ($search || $assignee || $group || $projectFilter || $priority || $period)
+                <button type="button" wire:click="clearFilters" class="btn btn-ghost justify-start sm:justify-center"><x-icon name="x" class="size-4" /> Clear filters</button>
             @endif
-        @endcan
-
-        @unless ($project)
-            <select wire:model.live="projectFilter" class="input w-auto">
-                <option value="">All projects</option>
-                <option value="none">No project</option>
-                @foreach ($this->projects as $p)
-                    <option value="{{ $p->id }}">{{ $p->name }}</option>
-                @endforeach
-            </select>
-        @endunless
-
-        <select wire:model.live="priority" class="input w-auto">
-            <option value="">Any priority</option>
-            @foreach ($priorities as $p)
-                <option value="{{ $p->value }}">{{ $p->label() }}</option>
-            @endforeach
-        </select>
-
-        @if ($search || $assignee || $group || $projectFilter || $priority || $period)
-            <button type="button" wire:click="clearFilters" class="btn btn-ghost">Clear</button>
-        @endif
-
-        <div class="ml-auto flex rounded-lg bg-slate-100 p-1">
-            <button type="button" wire:click="$set('view', 'board')" class="{{ $view === 'board' ? 'tab tab-active' : 'tab' }} flex items-center gap-1.5"><x-icon name="board" class="size-4" /> Board</button>
-            <button type="button" wire:click="$set('view', 'list')" class="{{ $view === 'list' ? 'tab tab-active' : 'tab' }} flex items-center gap-1.5"><x-icon name="list" class="size-4" /> List</button>
         </div>
     </div>
 
     @if ($view === 'list')
-        <div class="card overflow-hidden">
+        <ul class="space-y-2 md:hidden">
+            @forelse (collect($this->columns)->flatten()->sortBy([fn ($a, $b) => $b->priority->weight() <=> $a->priority->weight()]) as $task)
+                <li wire:key="m-row-{{ $task->id }}">
+                    <button type="button" wire:click="$dispatch('edit-task', { id: {{ $task->id }} })" class="card relative block w-full overflow-hidden p-4 pl-5 text-left">
+                        <span class="absolute inset-y-0 left-0 w-1 {{ $task->priority->barClasses() }}"></span>
+                        <span class="flex items-start justify-between gap-3">
+                            <span class="text-sm font-medium text-slate-900">{{ $task->title }}</span>
+                            <x-avatar :user="$task->assignee" size="size-6" />
+                        </span>
+                        <span class="mt-2 flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
+                            <span class="badge {{ $task->status->badgeClasses() }}">{{ $task->status->label() }}</span>
+                            <span class="badge {{ $task->priority->badgeClasses() }}">{{ $task->priority->label() }}</span>
+                            @if ($task->due_at)
+                                <span class="{{ $task->isOverdue() ? 'font-medium text-red-600' : '' }}">Due {{ $task->due_at->format('j M, g:i A') }}</span>
+                            @endif
+                        </span>
+                        @if (! $project && $task->project)
+                            <span class="mt-1.5 flex items-center gap-1.5 text-xs text-slate-500"><span class="size-1.5 rounded-full" style="background-color: {{ $task->project->color }}"></span>{{ $task->project->name }}</span>
+                        @endif
+                    </button>
+                </li>
+            @empty
+                <li class="card px-5 py-12 text-center text-sm text-slate-500">No tasks match these filters.</li>
+            @endforelse
+        </ul>
+
+        <div class="card hidden overflow-hidden md:block">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-slate-200 text-sm">
                     <thead class="bg-slate-50 text-left text-xs font-semibold tracking-wide text-slate-500 uppercase">
@@ -166,11 +206,11 @@
             </div>
         </div>
     @else
-        <div class="-mx-4 overflow-x-auto px-4 pb-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-            <div class="grid min-w-[64rem] grid-cols-4 gap-4">
+        <div class="-mx-4 snap-x snap-mandatory scroll-px-4 overflow-x-auto px-4 pb-4 sm:-mx-6 sm:scroll-px-6 sm:px-6 lg:-mx-8 lg:px-8 xl:snap-none">
+            <div class="flex gap-3 sm:gap-4 xl:grid xl:grid-cols-4">
                 @foreach ($statuses as $status)
                     @php $tasks = $this->columns[$status->value]; @endphp
-                    <section class="flex flex-col rounded-xl bg-slate-100/80 p-2" wire:key="col-{{ $status->value }}">
+                    <section class="flex w-[85vw] max-w-[22rem] shrink-0 snap-start flex-col rounded-xl bg-slate-100/80 p-2 sm:w-72 xl:w-auto xl:max-w-none" wire:key="col-{{ $status->value }}">
                         <header class="flex items-center justify-between px-2 py-2">
                             <h2 class="flex items-center gap-2 text-sm font-semibold text-slate-700">
                                 <span class="size-2 rounded-full {{ $status->dotClasses() }}"></span>

@@ -7,8 +7,8 @@
         </x-slot:actions>
     </x-page-header>
 
-    <div class="mb-5 flex flex-wrap items-center gap-2">
-        <div class="flex rounded-lg bg-slate-100 p-1">
+    <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div class="segmented">
             <button type="button" wire:click="$set('archived', false)" class="{{ ! $archived ? 'tab tab-active' : 'tab' }}">Active</button>
             <button type="button" wire:click="$set('archived', true)" class="{{ $archived ? 'tab tab-active' : 'tab' }}">Archived</button>
         </div>
