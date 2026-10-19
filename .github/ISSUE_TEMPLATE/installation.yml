@@ -1,13 +1,16 @@
 name: Installation help from Foxy Labs
-description: Ask Foxy Labs to install Task Tracker for you (one-time setup fee of $250)
+description: Ask Foxy Labs to install or host Task Tracker for you
 title: "Installation request: "
 labels: [installation]
 body:
   - type: markdown
     attributes:
       value: |
-        Foxy Labs can install and configure Task Tracker for you for a **one-time setup fee of $250**.
-        Ongoing maintenance and support can be agreed afterwards.
+        Foxy Labs can install, set up or host Task Tracker for you:
+        - **Basic install**: from $250 one-time
+        - **Full setup**: $500 one-time (includes team setup and training)
+        - **Managed hosting**: from $99/month (no server needed)
+        - **Maintenance plan**: from $49/month for self-hosted installs
 
         ⚠️ This request is public. **Do not** include passwords, API keys or server logins here. We'll collect those privately.
   - type: input
@@ -21,6 +24,17 @@ body:
     attributes:
       label: How can we reach you?
       description: An email address or WhatsApp number. You can also reach us directly at hello@thefoxylabs.com or on WhatsApp +234 708 640 7310.
+    validations:
+      required: true
+  - type: dropdown
+    id: package
+    attributes:
+      label: Which package are you interested in?
+      options:
+        - Basic install (from $250 one-time)
+        - Full setup ($500 one-time)
+        - Managed hosting (from $99/month)
+        - Not sure yet. Please advise.
     validations:
       required: true
   - type: dropdown
@@ -43,7 +57,7 @@ body:
     attributes:
       label: Ongoing support
       options:
-        - label: We're also interested in a maintenance and support plan
+        - label: We're also interested in a maintenance plan (from $49/month)
   - type: textarea
     id: notes
     attributes:

@@ -174,7 +174,17 @@ vendor/bin/pint
 
 ## Need help installing?
 
-**Foxy Labs** can install and configure Task Tracker for you for a **one-time setup fee of $250**. This covers your server, domain and HTTPS, database, email (SMTP), file storage, branding and the reminder scheduler. Ongoing maintenance and support can be agreed afterwards.
+**Foxy Labs**, who built Task Tracker, can set it up or host it for you:
+
+| Package | Price | What you get |
+|---|---|---|
+| **Basic install** | from **$250** one-time | Installed on your server: domain and HTTPS, database, email, file storage, branding and the reminder scheduler |
+| **Full setup** | **$500** one-time | Basic install, plus hosting set up for you, your staff and first projects added, a training session and 30 days of help |
+| **Managed hosting** | from **$99**/month | We host and run your private, branded workspace, with backups, monitoring, updates and support. No server needed. |
+| **Maintenance plan** | from **$49**/month | Updates, backups, monitoring and help for self-hosted installs |
+| **Custom work** | Quote | New features, integrations, or moving over from Trello, Asana or spreadsheets |
+
+See the [website](https://thefoxylabs.github.io/simple-task-tracker/#help) for details.
 
 Get in touch:
 
