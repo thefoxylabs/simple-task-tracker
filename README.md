@@ -3,6 +3,8 @@
 [![Tests](https://github.com/thefoxylabs/simple-task-tracker/actions/workflows/tests.yml/badge.svg)](https://github.com/thefoxylabs/simple-task-tracker/actions/workflows/tests.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 **An open-source, self-hosted, white-label task tracker for teams.**
+
+🌐 **Website:** https://thefoxylabs.github.io/simple-task-tracker/
 Download it, host it on your own server and brand it as your own: name, logo and colours are all set from the admin **Settings** page.
 
 Built with **Laravel 12**, **Livewire 4** and **Tailwind CSS 4**.

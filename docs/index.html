@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Task Tracker · Open-source, white-label task tracker for teams</title>
+    <meta name="description" content="A free, open-source, self-hosted task tracker your company can brand as its own. Kanban board, projects, daily to yearly plans, recurring tasks, email reminders and staff roles.">
+    <meta property="og:title" content="Task Tracker: the task tracker your company can call its own">
+    <meta property="og:description" content="Free, open-source and self-hosted. Kanban board, projects, plans, recurring tasks, email reminders and staff roles, with your name, logo and colours.">
+    <meta property="og:image" content="https://thefoxylabs.github.io/simple-task-tracker/screenshots/board.png">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f46e5'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11.5' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand: #4f46e5;
+            --brand-dark: #4338ca;
+            --brand-soft: #eef2ff;
+            --ink: #0f172a;
+            --body: #475569;
+            --muted: #64748b;
+            --line: #e2e8f0;
+            --bg: #ffffff;
+            --bg-soft: #f8fafc;
+            --radius: 16px;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+            color: var(--body);
+            background: var(--bg);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        img { max-width: 100%; height: auto; display: block; }
+        a { color: inherit; text-decoration: none; }
+        h1, h2, h3 { color: var(--ink); line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
+        p { margin: 0; }
+        code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+        .wrap { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+        .section { padding: 96px 0; }
+        .section.soft { background: var(--bg-soft); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+        .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--brand); background: var(--brand-soft); padding: 6px 12px; border-radius: 999px; }
+        .section-head { max-width: 680px; margin: 0 auto 56px; text-align: center; }
+        .section-head h2 { font-size: clamp(28px, 4vw, 40px); margin-top: 16px; }
+        .section-head p { margin-top: 16px; font-size: 18px; }
+
+        /* Buttons */
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 15px; padding: 12px 20px; border-radius: 12px; transition: transform .15s, box-shadow .15s, background .15s; white-space: nowrap; }
+        .btn svg { width: 18px; height: 18px; flex: none; }
+        .btn-primary { background: var(--brand); color: #fff; box-shadow: 0 8px 20px -6px rgb(79 70 229 / .55); }
+        .btn-primary:hover { background: var(--brand-dark); transform: translateY(-1px); }
+        .btn-secondary { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1px var(--line), 0 1px 2px rgb(0 0 0 / .05); }
+        .btn-secondary:hover { background: var(--bg-soft); transform: translateY(-1px); }
+        .btn-light { background: #fff; color: var(--brand-dark); }
+        .btn-light:hover { transform: translateY(-1px); }
+        .btn-ghost-light { color: #fff; box-shadow: inset 0 0 0 1px rgb(255 255 255 / .35); }
+        .btn-ghost-light:hover { background: rgb(255 255 255 / .1); }
+
+        /* Nav */
+        .nav { position: sticky; top: 0; z-index: 50; background: rgb(255 255 255 / .85); backdrop-filter: saturate(180%) blur(12px); border-bottom: 1px solid rgb(226 232 240 / .7); }
+        .nav .wrap { display: flex; align-items: center; height: 68px; gap: 32px; }
+        .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--ink); font-size: 17px; }
+        .logo-mark { width: 32px; height: 32px; border-radius: 9px; background: var(--brand); display: grid; place-items: center; box-shadow: 0 4px 10px -2px rgb(79 70 229 / .5); }
+        .logo-mark svg { width: 18px; height: 18px; }
+        .nav-links { display: flex; gap: 28px; font-size: 15px; font-weight: 500; color: var(--body); }
+        .nav-links a:hover { color: var(--ink); }
+        .nav-cta { margin-left: auto; display: flex; gap: 10px; }
+        .nav-cta .btn { padding: 9px 14px; font-size: 14px; }
+        .menu-btn { display: none; margin-left: auto; background: none; border: 0; padding: 8px; color: var(--ink); cursor: pointer; }
+        .menu-btn svg { width: 24px; height: 24px; }
+        .mobile-menu { display: none; border-top: 1px solid var(--line); padding: 12px 20px 20px; background: #fff; }
+        .mobile-menu a { display: block; padding: 10px 0; font-weight: 500; color: var(--ink); }
+        .mobile-menu .btn { width: 100%; margin-top: 8px; }
+        .nav.open .mobile-menu { display: block; }
+
+        /* Hero */
+        .hero { position: relative; padding: 80px 0 0; overflow: hidden; }
+        .hero::before { content: ''; position: absolute; inset: -40% -20% auto; height: 900px; background: radial-gradient(closest-side, rgb(99 102 241 / .16), transparent 70%), radial-gradient(closest-side at 80% 30%, rgb(16 185 129 / .10), transparent 70%); pointer-events: none; }
+        .hero .wrap { position: relative; text-align: center; }
+        .hero h1 { font-size: clamp(36px, 6.4vw, 68px); font-weight: 800; letter-spacing: -0.035em; max-width: 900px; margin: 22px auto 0; }
+        .hero h1 .grad { background: linear-gradient(120deg, #4f46e5, #0ea5e9 55%, #10b981); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .hero .lead { font-size: clamp(17px, 2.2vw, 20px); max-width: 680px; margin: 22px auto 0; }
+        .hero-ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 34px; }
+        .hero-meta { margin-top: 18px; font-size: 14px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: center; }
+        .hero-meta span { display: inline-flex; align-items: center; gap: 6px; }
+        .hero-meta svg { width: 16px; height: 16px; color: #10b981; }
+
+        .showcase { position: relative; margin: 64px auto 0; max-width: 1080px; }
+        .browser { border-radius: 14px 14px 0 0; background: #fff; box-shadow: 0 40px 80px -24px rgb(15 23 42 / .35), 0 0 0 1px rgb(15 23 42 / .08); overflow: hidden; }
+        .browser-bar { display: flex; align-items: center; gap: 7px; padding: 12px 16px; background: #f1f5f9; border-bottom: 1px solid var(--line); }
+        .browser-bar i { width: 11px; height: 11px; border-radius: 50%; background: #cbd5e1; }
+        .browser-bar i:nth-child(1) { background: #f87171; } .browser-bar i:nth-child(2) { background: #fbbf24; } .browser-bar i:nth-child(3) { background: #34d399; }
+        .browser-bar .url { margin-left: 14px; flex: 1; max-width: 360px; background: #fff; border-radius: 7px; font-size: 12px; color: var(--muted); padding: 4px 12px; text-align: left; box-shadow: inset 0 0 0 1px var(--line); }
+        .browser img { aspect-ratio: 1440 / 820; object-fit: cover; object-position: top; width: 100%; }
+        .phone { position: absolute; right: -28px; bottom: -36px; width: 190px; border-radius: 30px; padding: 8px; background: #0f172a; box-shadow: 0 30px 60px -12px rgb(15 23 42 / .5); }
+        .phone img { border-radius: 23px; aspect-ratio: 390 / 760; object-fit: cover; object-position: top; }
+
+        /* Highlights strip */
+        .strip { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: #fff; position: relative; z-index: 1; }
+        .strip .wrap { display: grid; grid-template-columns: repeat(4, 1fr); }
+        .strip div { padding: 28px 20px; text-align: center; }
+        .strip div + div { border-left: 1px solid var(--line); }
+        .strip b { display: block; font-size: 17px; color: var(--ink); }
+        .strip span { font-size: 14px; color: var(--muted); }
+
+        /* Features */
+        .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .feature { background: #fff; border-radius: var(--radius); padding: 28px; box-shadow: 0 0 0 1px var(--line), 0 1px 2px rgb(0 0 0 / .04); transition: box-shadow .2s, transform .2s; }
+        .feature:hover { transform: translateY(-3px); box-shadow: 0 0 0 1px var(--line), 0 18px 40px -16px rgb(15 23 42 / .2); }
+        .icon { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); }
+        .icon svg { width: 22px; height: 22px; }
+        .icon.green { background: #ecfdf5; color: #059669; } .icon.amber { background: #fffbeb; color: #d97706; } .icon.sky { background: #f0f9ff; color: #0284c7; } .icon.rose { background: #fff1f2; color: #e11d48; } .icon.violet { background: #f5f3ff; color: #7c3aed; }
+        .feature h3 { font-size: 18px; margin-top: 18px; }
+        .feature p { margin-top: 8px; font-size: 15px; }
+
+        /* Split sections */
+        .split { display: grid; grid-template-columns: 1fr 1.25fr; gap: 64px; align-items: center; }
+        .split.reverse { grid-template-columns: 1.25fr 1fr; }
+        .split.reverse .split-text { order: 2; }
+        .split h2 { font-size: clamp(28px, 3.6vw, 38px); margin-top: 16px; }
+        .split-text > p { margin-top: 16px; font-size: 17px; }
+        .checks { list-style: none; padding: 0; margin: 26px 0 0; display: grid; gap: 12px; }
+        .checks li { display: flex; gap: 12px; align-items: flex-start; font-size: 15.5px; }
+        .checks svg { width: 22px; height: 22px; flex: none; color: #fff; background: var(--brand); border-radius: 50%; padding: 4px; margin-top: 1px; }
+        .shot { border-radius: 14px; overflow: hidden; background: #fff; box-shadow: 0 30px 60px -24px rgb(15 23 42 / .3), 0 0 0 1px rgb(15 23 42 / .08); }
+        .shot img { width: 100%; }
+        .shot.crop img { aspect-ratio: 16 / 10; object-fit: cover; object-position: top left; }
+
+        /* Branding compare */
+        .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 8px; }
+        .compare figure { margin: 0; }
+        .compare figcaption { text-align: center; font-size: 14px; color: var(--muted); margin-top: 12px; }
+        .compare .shot img { aspect-ratio: 16 / 10; object-fit: cover; }
+        .swatches { display: flex; gap: 10px; margin-top: 28px; }
+        .swatches span { width: 30px; height: 30px; border-radius: 50%; box-shadow: 0 0 0 3px #fff, 0 0 0 4px var(--line); }
+
+        /* Roles */
+        .table-wrap { overflow-x: auto; border-radius: var(--radius); box-shadow: 0 0 0 1px var(--line); background: #fff; }
+        table { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 620px; }
+        th, td { padding: 16px 20px; text-align: left; border-bottom: 1px solid var(--line); }
+        th { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); background: var(--bg-soft); }
+        th:not(:first-child), td:not(:first-child) { text-align: center; }
+        tr:last-child td { border-bottom: 0; }
+        td:first-child { color: var(--ink); font-weight: 500; }
+        .yes { color: #059669; font-weight: 600; } .no { color: #cbd5e1; } .some { color: #d97706; font-size: 13px; font-weight: 500; }
+
+        /* Gallery */
+        .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+        .gallery figure { margin: 0; }
+        .gallery a.shot { display: block; transition: transform .2s; }
+        .gallery a.shot:hover { transform: translateY(-3px); }
+        .gallery img { aspect-ratio: 16 / 11; object-fit: cover; object-position: top left; }
+        .gallery figcaption { margin-top: 12px; font-size: 14px; }
+        .gallery figcaption b { color: var(--ink); display: block; font-size: 15px; }
+
+        /* Install */
+        .install { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+        .card { min-width: 0; background: #fff; border-radius: var(--radius); padding: 28px; box-shadow: 0 0 0 1px var(--line); }
+        .install > *, .split > *, .features > *, .gallery > *, .compare > * { min-width: 0; }
+        .card h3 { font-size: 19px; display: flex; align-items: center; gap: 10px; }
+        .card > p { margin-top: 8px; font-size: 15px; }
+        .code { position: relative; margin-top: 18px; background: #0f172a; border-radius: 12px; overflow: hidden; }
+        .code pre { margin: 0; padding: 46px 20px 18px; color: #e2e8f0; font-size: 13.5px; line-height: 1.75; overflow-x: auto; }
+        .code .c { color: #64748b; }
+        .copy { position: absolute; top: 10px; right: 10px; font: 600 12px Inter, sans-serif; color: #cbd5e1; background: rgb(255 255 255 / .08); border: 0; border-radius: 7px; padding: 6px 10px; cursor: pointer; }
+        .copy:hover { background: rgb(255 255 255 / .16); color: #fff; }
+        .reqs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 22px; }
+        .req { background: #fff; border-radius: 14px; padding: 18px 20px; box-shadow: 0 0 0 1px var(--line); font-size: 14px; }
+        .req b { display: block; color: var(--ink); font-size: 15px; }
+        .note { margin-top: 18px; font-size: 14px; color: var(--muted); text-align: center; }
+        .note code { background: var(--bg-soft); padding: 2px 6px; border-radius: 6px; color: var(--ink); font-size: 13px; }
+
+        /* Download band */
+        .download { padding: 0 0 96px; }
+        .band { position: relative; overflow: hidden; border-radius: 28px; padding: 64px 40px; text-align: center; color: #e0e7ff; background: linear-gradient(135deg, #4338ca, #4f46e5 45%, #0ea5e9); box-shadow: 0 40px 80px -30px rgb(67 56 202 / .6); }
+        .band::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 15% 20%, rgb(255 255 255 / .18), transparent 40%), radial-gradient(circle at 85% 90%, rgb(255 255 255 / .12), transparent 40%); pointer-events: none; }
+        .band > * { position: relative; z-index: 1; }
+        .band h2 { color: #fff; font-size: clamp(30px, 4.4vw, 46px); }
+        .band p { max-width: 560px; margin: 16px auto 0; font-size: 18px; }
+        .band .ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 32px; }
+        .clone { display: inline-flex; align-items: center; gap: 12px; margin-top: 26px; background: rgb(15 23 42 / .35); padding: 10px 10px 10px 18px; border-radius: 12px; font-size: 14px; max-width: 100%; }
+        .clone code { color: #fff; overflow-x: auto; white-space: nowrap; }
+        .clone .copy { position: static; flex: none; }
+        .code::before { content: ''; position: absolute; top: 17px; left: 20px; width: 40px; height: 8px; background: radial-gradient(circle 4px at 4px 4px, #475569 98%, transparent) 0 0 / 14px 8px repeat-x; }
+
+        /* FAQ */
+        .faq { max-width: 780px; margin: 0 auto; display: grid; gap: 12px; }
+        details { background: #fff; border-radius: 14px; box-shadow: 0 0 0 1px var(--line); padding: 4px 22px; }
+        summary { cursor: pointer; list-style: none; font-weight: 600; color: var(--ink); padding: 16px 0; display: flex; justify-content: space-between; gap: 16px; font-size: 16px; }
+        summary::-webkit-details-marker { display: none; }
+        summary::after { content: '+'; font-size: 22px; line-height: 1; color: var(--brand); transition: transform .2s; }
+        details[open] summary::after { transform: rotate(45deg); }
+        details p { padding: 0 0 18px; font-size: 15px; }
+
+        /* Footer */
+        footer { border-top: 1px solid var(--line); padding: 40px 0; font-size: 14px; color: var(--muted); }
+        footer .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+        footer nav { display: flex; flex-wrap: wrap; gap: 22px; }
+        footer a:hover { color: var(--ink); }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .features, .gallery { grid-template-columns: repeat(2, 1fr); }
+            .split, .split.reverse { grid-template-columns: 1fr; gap: 40px; }
+            .split.reverse .split-text { order: 0; }
+            .reqs { grid-template-columns: repeat(2, 1fr); }
+            .phone { right: 8px; width: 150px; }
+        }
+        @media (max-width: 860px) {
+            .nav-links, .nav-cta { display: none; }
+            .menu-btn { display: block; }
+            .install { grid-template-columns: 1fr; }
+            .strip .wrap { grid-template-columns: repeat(2, 1fr); }
+            .strip div:nth-child(3) { border-left: 0; }
+            .strip div:nth-child(n + 3) { border-top: 1px solid var(--line); }
+        }
+        @media (max-width: 640px) {
+            .section { padding: 72px 0; }
+            .hero { padding-top: 56px; }
+            .hero-ctas .btn { width: 100%; }
+            .features, .gallery, .compare, .reqs { grid-template-columns: 1fr; }
+            .phone { width: 112px; padding: 5px; border-radius: 20px; bottom: -24px; right: 4px; }
+            .phone img { border-radius: 16px; }
+            .browser-bar .url { display: none; }
+            .band { padding: 48px 22px; border-radius: 22px; }
+            .card { padding: 22px 18px; }
+            .band .ctas .btn { width: 100%; }
+            .clone { flex-direction: column; align-items: stretch; padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="nav" id="top">
+    <div class="wrap">
+        <a href="#top" class="logo">
+            <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+            Task Tracker
+        </a>
+        <nav class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#branding">Branding</a>
+            <a href="#screenshots">Screenshots</a>
+            <a href="#install">Install</a>
+            <a href="#faq">FAQ</a>
+        </nav>
+        <div class="nav-cta">
+            <a class="btn btn-secondary" href="https://github.com/thefoxylabs/simple-task-tracker" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+                GitHub
+            </a>
+            <a class="btn btn-primary" href="https://github.com/thefoxylabs/simple-task-tracker/archive/refs/heads/main.zip">Download</a>
+        </div>
+        <button class="menu-btn" aria-label="Open menu" onclick="document.getElementById('top').classList.toggle('open')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+    </div>
+    <div class="mobile-menu" onclick="if (event.target.tagName === 'A') document.getElementById('top').classList.remove('open')">
+        <a href="#features">Features</a>
+        <a href="#branding">Branding</a>
+        <a href="#screenshots">Screenshots</a>
+        <a href="#install">Install</a>
+        <a href="#faq">FAQ</a>
+        <a class="btn btn-primary" href="https://github.com/thefoxylabs/simple-task-tracker/archive/refs/heads/main.zip">Download source code</a>
+    </div>
+</header>
+
+<main>
+    <!-- Hero -->
+    <section class="hero">
+        <div class="wrap">
+            <span class="eyebrow">Free · Open source · MIT licensed</span>
+            <h1>The task tracker your company can <span class="grad">call its own</span></h1>
+            <p class="lead">Plan, assign and track your team's work on your own server, under your own name. Kanban boards, projects, daily to yearly plans, recurring tasks and email reminders, all branded with your logo and colours.</p>
+            <div class="hero-ctas">
+                <a class="btn btn-primary" href="https://github.com/thefoxylabs/simple-task-tracker/archive/refs/heads/main.zip">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 5-5m-5 5-5-5M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+                    Download source code
+                </a>
+                <a class="btn btn-secondary" href="https://github.com/thefoxylabs/simple-task-tracker" target="_blank" rel="noopener">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+                    View on GitHub
+                </a>
+            </div>
+            <div class="hero-meta">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Laravel 12 · Livewire · Tailwind CSS</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>MySQL or SQLite</span>
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Docker ready</span>
+            </div>
+
+            <div class="showcase">
+                <div class="browser">
+                    <div class="browser-bar"><i></i><i></i><i></i><span class="url">tasks.yourcompany.com/board</span></div>
+                    <img src="screenshots/board.png" alt="The Kanban board showing tasks in To do, In progress, In review and Done columns" width="1440" height="820">
+                </div>
+                <div class="phone"><img src="screenshots/mobile.png" alt="The board on a phone" width="390" height="760" loading="lazy"></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="strip">
+        <div class="wrap">
+            <div><b>100% free</b><span>MIT licence, no seats or fees</span></div>
+            <div><b>Your server</b><span>Your data never leaves it</span></div>
+            <div><b>Your brand</b><span>Name, logo and colours</span></div>
+            <div><b>Any screen</b><span>Desktop, tablet and phone</span></div>
+        </div>
+    </div>
+
+    <!-- Features -->
+    <section class="section" id="features">
+        <div class="wrap">
+            <div class="section-head">
+                <span class="eyebrow">Everything a team needs</span>
+                <h2>Simple enough for everyone, powerful enough to run the company</h2>
+                <p>No bloat and no learning curve. Just the tools to plan the work, hand it out and make sure it gets done.</p>
+            </div>
+            <div class="features">
+                <div class="feature">
+                    <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M15 4v16"/></svg></div>
+                    <h3>Kanban board</h3>
+                    <p>Every task at a glance in To do, In progress, In review and Done. Drag cards between columns, see priorities in colour and who each task is assigned to.</p>
+                </div>
+                <div class="feature">
+                    <div class="icon sky"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg></div>
+                    <h3>Projects</h3>
+                    <p>Group tasks by project, track progress, set a lead and dates, and attach briefs or specs. Archive finished projects and restore them any time.</p>
+                </div>
+                <div class="feature">
+                    <div class="icon violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></div>
+                    <h3>Daily → yearly plans</h3>
+                    <p>Set goals for a day, week, month, quarter or year, for one person, a team or the whole company. Link tasks to a plan and watch progress fill up.</p>
+                </div>
+                <div class="feature">
+                    <div class="icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v5h5M20 20v-5h-5"/><path d="M5.5 15a7.5 7.5 0 0 0 13.4 1.5M18.5 9A7.5 7.5 0 0 0 5.1 7.5"/></svg></div>
+                    <h3>Recurring tasks</h3>
+                    <p>Weekly reports, monthly invoicing, daily checks: set them up once and they are created and assigned automatically on schedule.</p>
+                </div>
+                <div class="feature">
+                    <div class="icon amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></div>
+                    <h3>Deadlines &amp; email reminders</h3>
+                    <p>Whoever sets the task picks the deadline and when the reminder goes out. Staff are emailed when work is assigned and again before it's due.</p>
+                </div>
+                <div class="feature">
+                    <div class="icon rose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+                    <h3>Track every person</h3>
+                    <p>See what each person has for any day, week, month, quarter or year, with done, open and overdue counts.</p>
+                </div>
+                <div class="feature">
+                    <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"/><path d="M9 12l2 2 4-4"/></svg></div>
+                    <h3>Admin, manager &amp; staff roles</h3>
+                    <p>Managers plan and assign work. Staff see and update their own tasks. Admins control settings and branding. Permissions are checked on the server.</p>
+                </div>
+                <div class="feature">
+                    <div class="icon sky"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/></svg></div>
+                    <h3>Staff &amp; groups</h3>
+                    <p>Add staff with an email invitation, organise them into groups such as Sales or Operations, and filter everything by group.</p>
+                </div>
+                <div class="feature">
+                    <div class="icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.4 11.1l-9.2 9.2a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.5-8.5"/></svg></div>
+                    <h3>Files &amp; proof of completion</h3>
+                    <p>Attach files to tasks and projects. They're stored in Cloudflare R2 by default (or S3, or on your server) and downloaded with private, expiring links.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Planning -->
+    <section class="section soft">
+        <div class="wrap split">
+            <div class="split-text">
+                <span class="eyebrow">Planning</span>
+                <h2>From today's to-do list to this year's goals</h2>
+                <p>Plans turn big goals into tracked work. Pick a period and who it's for, link tasks, and everyone can see how close you are.</p>
+                <ul class="checks">
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Daily, weekly, monthly, quarterly and yearly plans</li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Plans for a person, a staff group or everyone</li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Live progress from the tasks linked to each plan</li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Filter the board by today, this week, month, quarter or year</li>
+                </ul>
+            </div>
+            <a class="shot crop" href="screenshots/plans.png" target="_blank"><img src="screenshots/plans.png" alt="Plans grouped by weekly, monthly, quarterly and yearly with progress bars" loading="lazy"></a>
+        </div>
+    </section>
+
+    <!-- Team -->
+    <section class="section">
+        <div class="wrap split reverse">
+            <div class="split-text">
+                <span class="eyebrow">Your team</span>
+                <h2>Know who's doing what, and what's running late</h2>
+                <p>Managers see the whole team's workload at a glance and can open anyone's tasks for any period. Staff get a clear "My work" view.</p>
+                <ul class="checks">
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Tasks, completed, open and overdue counts per person</li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Step back and forward through days, weeks, months and more</li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Assign a task to someone in one click</li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Deactivate leavers without losing their history</li>
+                </ul>
+            </div>
+            <a class="shot" href="screenshots/staff.png" target="_blank"><img src="screenshots/staff.png" alt="Staff table with weekly task counts per person" loading="lazy"></a>
+        </div>
+    </section>
+
+    <!-- Branding -->
+    <section class="section soft" id="branding">
+        <div class="wrap">
+            <div class="section-head">
+                <span class="eyebrow">White label</span>
+                <h2>Your name. Your logo. Your colours.</h2>
+                <p>From the Settings page, an admin can turn Task Tracker into your company's own app in under a minute. No code, no rebuild. The brand colour flows through every button, badge, checkbox and email.</p>
+            </div>
+            <div class="compare">
+                <figure>
+                    <div class="shot"><img src="screenshots/login.png" alt="Default sign-in page" loading="lazy"></div>
+                    <figcaption>Out of the box</figcaption>
+                </figure>
+                <figure>
+                    <div class="shot"><img src="screenshots/login-branded.png" alt="The same sign-in page rebranded as Foxy Tasks in teal" loading="lazy"></div>
+                    <figcaption>After two minutes in Settings</figcaption>
+                </figure>
+            </div>
+            <div class="features" style="margin-top: 48px">
+                <div class="feature">
+                    <div class="icon violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2a10 10 0 0 0 0 20c1 0 1.5-.8 1.5-1.6 0-.4-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.7-1.6 1.6-1.6H16a6 6 0 0 0 6-6c0-4.9-4.5-8.6-10-8.6Z"/></svg></div>
+                    <h3>Name, logo &amp; colour</h3>
+                    <p>Upload your logo (it's the browser icon too), set the app and company name, and pick a brand colour. Every shade is generated from it.</p>
+                </div>
+                <div class="feature">
+                    <div class="icon sky"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></div>
+                    <h3>Your email, your SMTP</h3>
+                    <p>Enter SMTP details in Settings (stored encrypted) and send a test email. Reminders and invitations go out under your name.</p>
+                </div>
+                <div class="feature">
+                    <div class="icon amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg></div>
+                    <h3>Go further in code</h3>
+                    <p>It's plain Laravel, Blade and Tailwind. Change any screen, add features, and keep it all, because the MIT licence lets you.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roles -->
+    <section class="section">
+        <div class="wrap">
+            <div class="section-head">
+                <span class="eyebrow">Role-based access</span>
+                <h2>The right access for everyone</h2>
+                <p>Three simple roles. Every permission is enforced on the server, not just hidden in the interface.</p>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th></th><th>Admin</th><th>Manager</th><th>Staff</th></tr></thead>
+                    <tbody>
+                        <tr><td>See the board, projects and plans</td><td class="yes">All tasks</td><td class="yes">All tasks</td><td class="some">Their own tasks</td></tr>
+                        <tr><td>Create and assign tasks</td><td class="yes">Anyone</td><td class="yes">Anyone</td><td class="some">Themselves</td></tr>
+                        <tr><td>Change a task's deadline and reminder</td><td class="yes">✓</td><td class="yes">✓</td><td class="some">Tasks they set</td></tr>
+                        <tr><td>Move tasks and attach proof of completion</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+                        <tr><td>Projects, plans and recurring tasks</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td></tr>
+                        <tr><td>Add staff and manage groups</td><td class="yes">✓</td><td class="some">Staff accounts</td><td class="no">—</td></tr>
+                        <tr><td>Branding, SMTP and settings</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Screenshots -->
+    <section class="section soft" id="screenshots">
+        <div class="wrap">
+            <div class="section-head">
+                <span class="eyebrow">Take a look</span>
+                <h2>Clean, fast and a pleasure to use</h2>
+                <p>Searchable dropdowns everywhere, a custom date and time picker, and layouts that work just as well on a phone.</p>
+            </div>
+            <div class="gallery">
+                <figure><a class="shot" href="screenshots/dashboard.png" target="_blank"><img src="screenshots/dashboard.png" alt="Dashboard" loading="lazy"></a><figcaption><b>Dashboard</b>Your tasks, overdue work, plans, projects and team workload.</figcaption></figure>
+                <figure><a class="shot" href="screenshots/project.png" target="_blank"><img src="screenshots/project.png" alt="Project page" loading="lazy"></a><figcaption><b>Projects</b>Progress, lead, dates, files and the project's own board.</figcaption></figure>
+                <figure><a class="shot" href="screenshots/task.png" target="_blank"><img src="screenshots/task.png" alt="Task form" loading="lazy"></a><figcaption><b>Tasks</b>Deadline, reminder, priority, assignee, plan and attachments.</figcaption></figure>
+                <figure><a class="shot" href="screenshots/date-picker.png" target="_blank"><img src="screenshots/date-picker.png" alt="Date and time picker" loading="lazy"></a><figcaption><b>Date &amp; time picker</b>Calendar, shortcuts and a scrollable time picker.</figcaption></figure>
+                <figure><a class="shot" href="screenshots/settings.png" target="_blank"><img src="screenshots/settings.png" alt="Branding settings" loading="lazy"></a><figcaption><b>Settings</b>Branding, time zone, reminders and SMTP in one place.</figcaption></figure>
+                <figure><a class="shot" href="screenshots/mobile.png" target="_blank"><img src="screenshots/mobile.png" alt="The board on a phone" loading="lazy" style="object-position: top center"></a><figcaption><b>On your phone</b>Swipeable columns, cards and a bottom-sheet date picker.</figcaption></figure>
+            </div>
+        </div>
+    </section>
+
+    <!-- Install -->
+    <section class="section" id="install">
+        <div class="wrap">
+            <div class="section-head">
+                <span class="eyebrow">Get started</span>
+                <h2>Up and running in minutes</h2>
+                <p>Host it on any server that runs PHP, or start everything with Docker. On first visit, a setup wizard creates your admin account.</p>
+            </div>
+            <div class="install">
+                <div class="card">
+                    <h3>🖥️ On your server</h3>
+                    <p>Any Linux host, VPS or PHP hosting with SSH access.</p>
+                    <div class="code"><button class="copy">Copy</button><pre><span class="c"># Get the code</span>
+git clone https://github.com/thefoxylabs/simple-task-tracker.git task-tracker
+cd task-tracker
+
+<span class="c"># Install and configure</span>
+composer install --no-dev --optimize-autoloader
+cp .env.example .env
+php artisan key:generate
+<span class="c"># edit .env: database, SMTP and R2 storage</span>
+php artisan migrate --force
+npm ci &amp;&amp; npm run build</pre></div>
+                    <p style="margin-top: 14px; font-size: 14px">Point your web server at <code>public/</code> and add the scheduler to cron for reminders:</p>
+                    <div class="code"><button class="copy">Copy</button><pre>* * * * * cd /path/to/task-tracker &amp;&amp; php artisan schedule:run</pre></div>
+                </div>
+                <div class="card">
+                    <h3>🐳 With Docker</h3>
+                    <p>The app, MySQL and the reminder scheduler, started with one command.</p>
+                    <div class="code"><button class="copy">Copy</button><pre>git clone https://github.com/thefoxylabs/simple-task-tracker.git task-tracker
+cd task-tracker
+cp .env.example .env
+<span class="c"># set APP_KEY, APP_URL, SMTP and R2 in .env</span>
+docker compose up -d</pre></div>
+                    <p style="margin-top: 14px; font-size: 14px">Then open <code>http://localhost:8080</code>.</p>
+                    <h3 style="margin-top: 28px">🧪 Try it with demo data</h3>
+                    <div class="code"><button class="copy">Copy</button><pre>php artisan migrate:fresh --seed --seeder=DemoSeeder</pre></div>
+                    <p style="margin-top: 14px; font-size: 14px">Sign in as <code>admin@example.com</code>, <code>manager@example.com</code> or <code>staff@example.com</code>. The password is <code>password</code>.</p>
+                </div>
+            </div>
+            <div class="reqs">
+                <div class="req"><b>PHP 8.2+</b>with intl, mbstring, pdo and zip</div>
+                <div class="req"><b>MySQL 8 or MariaDB</b>or SQLite for quick trials</div>
+                <div class="req"><b>Node.js 20+</b>only to build the CSS and JS</div>
+                <div class="req"><b>SMTP + R2 bucket</b>for emails and file uploads</div>
+            </div>
+            <p class="note">Full instructions are in the <a href="https://github.com/thefoxylabs/simple-task-tracker#readme" style="color: var(--brand); font-weight: 600">README</a>. Tip: set <code>SETUP_TOKEN</code> in <code>.env</code> so only you can create the first admin.</p>
+        </div>
+    </section>
+
+    <!-- Download -->
+    <section class="download" id="download">
+        <div class="wrap">
+            <div class="band">
+                <h2>Make it yours today</h2>
+                <p>Download the complete source code. It's free forever under the MIT licence, with no accounts, limits or tracking.</p>
+                <div class="ctas">
+                    <a class="btn btn-light" href="https://github.com/thefoxylabs/simple-task-tracker/archive/refs/heads/main.zip">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 5-5m-5 5-5-5M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+                        Download .zip
+                    </a>
+                    <a class="btn btn-ghost-light" href="https://github.com/thefoxylabs/simple-task-tracker/releases" target="_blank" rel="noopener">Releases</a>
+                    <a class="btn btn-ghost-light" href="https://github.com/thefoxylabs/simple-task-tracker" target="_blank" rel="noopener">★ Star on GitHub</a>
+                </div>
+                <div class="clone"><code>git clone https://github.com/thefoxylabs/simple-task-tracker.git</code><button class="copy">Copy</button></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section soft" id="faq">
+        <div class="wrap">
+            <div class="section-head">
+                <span class="eyebrow">FAQ</span>
+                <h2>Questions, answered</h2>
+            </div>
+            <div class="faq">
+                <details open>
+                    <summary>Is it really free?</summary>
+                    <p>Yes. Task Tracker is open source under the MIT licence. Use it for any number of users, change it however you like, and use it commercially. There are no paid tiers.</p>
+                </details>
+                <details>
+                    <summary>Can we remove your name and use our own brand?</summary>
+                    <p>Absolutely, that's the point. Set your app name, logo and colour in Settings and your team will only ever see your brand. The MIT licence only asks that you keep the licence notice in the source code.</p>
+                </details>
+                <details>
+                    <summary>What do we need to host it?</summary>
+                    <p>A server that runs PHP 8.2+ with MySQL/MariaDB (or SQLite), plus a cron entry for reminders. Most VPS and many PHP hosts work. Docker users can start everything with <code>docker compose up -d</code>.</p>
+                </details>
+                <details>
+                    <summary>Where are uploaded files stored?</summary>
+                    <p>In Cloudflare R2 by default. It's cheap and fast, and the bucket stays private. You can switch to Amazon S3, any S3-compatible storage, or the server's own disk with one line in <code>.env</code>.</p>
+                </details>
+                <details>
+                    <summary>How do email reminders work?</summary>
+                    <p>When someone creates a task they choose the deadline and when the reminder should go out (for example, one day before). The built-in scheduler checks every minute and emails the assignee using your SMTP settings.</p>
+                </details>
+                <details>
+                    <summary>Can staff see each other's tasks?</summary>
+                    <p>No. Staff see only the tasks assigned to them or created by them. Managers and admins see everything. The server enforces this on every request.</p>
+                </details>
+                <details>
+                    <summary>Does it work on phones?</summary>
+                    <p>Yes. Every screen adapts to phones and tablets: swipeable board columns, card layouts instead of tables, and a bottom-sheet date picker.</p>
+                </details>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="wrap">
+        <a href="#top" class="logo" style="font-size: 15px">
+            <span class="logo-mark" style="width: 26px; height: 26px; border-radius: 7px"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+            Task Tracker
+        </a>
+        <nav>
+            <a href="https://github.com/thefoxylabs/simple-task-tracker" target="_blank" rel="noopener">GitHub</a>
+            <a href="https://github.com/thefoxylabs/simple-task-tracker#readme" target="_blank" rel="noopener">Documentation</a>
+            <a href="https://github.com/thefoxylabs/simple-task-tracker/issues" target="_blank" rel="noopener">Report an issue</a>
+            <a href="https://github.com/thefoxylabs/simple-task-tracker/blob/main/LICENSE" target="_blank" rel="noopener">MIT licence</a>
+        </nav>
+        <span>© 2026 Foxy Labs Technology</span>
+    </div>
+</footer>
+
+<script>
+    document.querySelectorAll('.copy').forEach((button) => {
+        button.addEventListener('click', async () => {
+            const source = button.parentElement.querySelector('pre, code');
+            const text = source.innerText.split('\n').filter((line) => ! line.trim().startsWith('#')).join('\n').trim();
+            try {
+                await navigator.clipboard.writeText(text);
+                button.textContent = 'Copied!';
+            } catch {
+                button.textContent = 'Press Ctrl+C';
+            }
+            setTimeout(() => (button.textContent = 'Copy'), 1600);
+        });
+    });
+</script>
+</body>
+</html>
