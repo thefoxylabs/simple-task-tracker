@@ -12,6 +12,7 @@ Thanks for helping improve Task Tracker!
 
 - Follow the existing structure: Livewire components in `app/Livewire`, views in `resources/views/livewire`.
 - Use the shared CSS classes (`btn`, `input`, `card`, `badge`…) and the `brand-*` colours so custom branding keeps working.
+- Every `<select>` becomes a searchable Select2 dropdown automatically (`resources/js/select2.js`). Add `data-native` to keep a plain browser select.
 - Check permissions on the server (Gates and policies), not only in the UI.
 - Write new settings through `App\Support\Settings` so they appear in the admin area.
 

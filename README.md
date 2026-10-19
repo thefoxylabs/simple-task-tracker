@@ -21,6 +21,7 @@ Built with **Laravel 12**, **Livewire 4** and **Tailwind CSS 4**.
 - **Staff and groups.** Add staff (with an email invitation to set their password), organise them into groups such as departments, and deactivate leavers.
 - **Attachments.** Upload files to tasks (for example, proof of completion) and to projects. Files are stored in **Cloudflare R2** by default, or locally or in S3.
 - **White-label branding.** App name, company name, logo, brand colour, sign-in tagline and footer text.
+- **Searchable dropdowns.** Every dropdown uses Select2, so you can type to find people, projects, plans or time zones.
 - **SMTP settings in the app.** Configure mail from the Settings page and send a test email, or use `.env`.
 
 ## Roles and permissions

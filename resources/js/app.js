@@ -1,1 +1,3 @@
-// Livewire ships with Alpine.js, so no extra JavaScript is needed here.
+// Livewire ships with Alpine.js. The only extra library is Select2, which
+// turns every <select> in the app into a searchable dropdown.
+import './select2';

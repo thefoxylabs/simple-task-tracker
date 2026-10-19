@@ -1,6 +1,6 @@
 @props(['title', 'width' => 'max-w-lg', 'close' => null])
 <div class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true"
-     x-data x-on:keydown.escape.window="$refs.closeButton?.click()">
+     x-data x-on:keydown.escape.window="$event.target.closest('.select2-container') || $refs.closeButton?.click()">
     <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-[2px]" @if($close) wire:click="{{ $close }}" @endif></div>
     <div class="relative flex min-h-full items-start justify-center p-4 sm:items-center sm:p-6">
         <div {{ $attributes->merge(['class' => "relative w-full $width rounded-2xl bg-white shadow-xl ring-1 ring-slate-200"]) }}>
