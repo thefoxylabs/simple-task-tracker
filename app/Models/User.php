@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Role;
+use App\Enums\TwoFactorMethod;
 use App\Notifications\ResetPassword;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -32,6 +33,9 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
+        'two_factor_trust_token',
     ];
 
     protected function casts(): array
@@ -41,6 +45,10 @@ class User extends Authenticatable
             'password' => 'hashed',
             'role' => Role::class,
             'is_active' => 'boolean',
+            'two_factor_method' => TwoFactorMethod::class,
+            'two_factor_secret' => 'encrypted',
+            'two_factor_recovery_codes' => 'encrypted:array',
+            'two_factor_confirmed_at' => 'datetime',
         ];
     }
 
@@ -58,6 +66,33 @@ class User extends Authenticatable
     public function sendPasswordResetNotification($token): void
     {
         $this->notify(new ResetPassword($token));
+    }
+
+    /** The 2FA method in use: the user's choice, or email codes when the organisation requires 2FA. */
+    public function twoFactorMethod(): ?TwoFactorMethod
+    {
+        if ($this->two_factor_method === TwoFactorMethod::App && $this->two_factor_confirmed_at) {
+            return TwoFactorMethod::App;
+        }
+
+        if ($this->two_factor_method === TwoFactorMethod::Email || settings('two_factor_required')) {
+            return TwoFactorMethod::Email;
+        }
+
+        return null;
+    }
+
+    public function hasTwoFactor(): bool
+    {
+        return $this->twoFactorMethod() !== null;
+    }
+
+    /** Email address with the middle hidden, e.g. "ja***@company.com". */
+    public function maskedEmail(): string
+    {
+        [$name, $domain] = array_pad(explode('@', $this->email, 2), 2, '');
+
+        return mb_substr($name, 0, 2).str_repeat('*', max(3, mb_strlen($name) - 2)).'@'.$domain;
     }
 
     public function isAdmin(): bool

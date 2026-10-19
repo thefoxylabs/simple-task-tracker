@@ -427,7 +427,7 @@
                 <div class="feature">
                     <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"/><path d="M9 12l2 2 4-4"/></svg></div>
                     <h3>Admin, manager &amp; staff roles</h3>
-                    <p>Managers plan and assign work. Staff see and update their own tasks. Admins control settings and branding. Permissions are checked on the server.</p>
+                    <p>Managers plan and assign work. Staff see and update their own tasks. Admins control settings and branding. Two-factor sign-in (email codes or an authenticator app) can be required for everyone.</p>
                 </div>
                 <div class="feature">
                     <div class="icon sky"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/></svg></div>
@@ -755,6 +755,10 @@ docker compose up -d</pre></div>
                 <details>
                     <summary>How do email reminders work?</summary>
                     <p>When someone creates a task they choose the deadline and when the reminder should go out (for example, one day before). The built-in scheduler checks every minute and emails the assignee using your SMTP settings. All emails are queued and sent in the background with automatic retries, so a slow mail server never slows anyone down.</p>
+                </details>
+                <details>
+                    <summary>Does it support two-factor authentication?</summary>
+                    <p>Yes. By default people get a 6-digit code by email when they sign in, and anyone can switch to an authenticator app such as Google Authenticator instead. Admins can require it for the whole organisation with one switch, and the built-in System status page confirms that email, the scheduler, storage and everything else are working.</p>
                 </details>
                 <details>
                     <summary>Can staff see each other's tasks?</summary>

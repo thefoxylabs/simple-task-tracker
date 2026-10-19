@@ -22,6 +22,8 @@ Built with **Laravel 13**, **Livewire 4** and **Tailwind CSS 4**.
 - **Staff tracking.** See each person's tasks for any day, week, month, quarter or year, with completed, open and overdue counts.
 - **Staff and groups.** Add staff (with an email invitation to set their password), organise them into groups such as departments, and deactivate leavers.
 - **Attachments.** Upload files to tasks (for example, proof of completion) and to projects. Files are stored in **Cloudflare R2** by default, or locally or in S3.
+- **Two-factor sign-in.** Email codes by default, or an authenticator app (Google Authenticator, Microsoft Authenticator, 1Password…) with recovery codes. Admins can require it for everyone, and people can trust a device for 30 days.
+- **System status.** Settings → System status checks everything the app relies on (database, email and SMTP connection, queue, scheduler, file storage, PHP, HTTPS, security) and explains how to fix anything that isn't working. Admins see a warning on the dashboard when something breaks.
 - **White-label branding.** App name, company name, logo, brand colour, sign-in tagline and footer text.
 - **A custom date and time picker.** A calendar with month and year views, shortcuts (Today, Tomorrow, Next Monday, In a week), a scrollable time picker with common times, and keyboard support. On phones it opens as a bottom sheet.
 - **Works on phones.** Every page and form is responsive: swipeable board columns, card layouts instead of tables, and tab rows that scroll sideways.
@@ -40,7 +42,9 @@ Built with **Laravel 13**, **Livewire 4** and **Tailwind CSS 4**.
 | Add and edit staff and staff groups | ✅ everyone | ✅ staff accounts | – |
 | View any person's work by period | ✅ | ✅ | ✅ only their own ("My work") |
 | Delete projects | ✅ | – | – |
-| Settings: branding, SMTP, time zone | ✅ | – | – |
+| Settings: branding, SMTP, security, time zone | ✅ | – | – |
+| System status page | ✅ | – | – |
+| Reset someone's two-factor sign-in | ✅ | ✅ staff accounts | – |
 
 ## Screenshots
 
@@ -53,6 +57,8 @@ Built with **Laravel 13**, **Livewire 4** and **Tailwind CSS 4**.
 | ![Plans](docs/screenshots/plans.png) | ![Settings](docs/screenshots/settings.png) |
 | **Date and time picker** | **On a phone** |
 | ![Date picker](docs/screenshots/date-picker.png) | ![Mobile](docs/screenshots/mobile.png) |
+| **Two-factor sign-in** | **System status** |
+| ![Two-factor](docs/screenshots/two-factor.png) | ![System status](docs/screenshots/system-status.png) |
 
 ## Requirements
 
@@ -207,6 +213,7 @@ See [CHANGELOG.md](CHANGELOG.md) for what's new in each release.
 Task Tracker is built to be safe to put on the internet:
 
 - **Access control.** Roles are checked on the server for every page, action and file download. Staff only see their own tasks, and the projects and plans that involve them.
+- **Two-factor authentication.** Email codes or an authenticator app, which admins can require for everyone. If email ever stops working while it's required, `php artisan app:reset-two-factor --disable-requirement` on the server switches the requirement off (or pass an email address to reset one person).
 - **Sign-in protection.** Login, password reset and setup are rate-limited. Passwords need at least 10 characters with letters and numbers. Changing your email needs your current password, and changing your password signs you out on other devices.
 - **Protected setup.** In production, a one-time setup token is required to create the first admin.
 - **Browser hardening.** Security headers stop the app being framed by other sites. Cookies are encrypted, HTTP-only and HTTPS-only (`SESSION_SECURE_COOKIE=true`). The app only answers to the domain in `APP_URL`.

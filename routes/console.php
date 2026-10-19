@@ -1,6 +1,13 @@
 <?php
 
+use App\Support\SystemStatus;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schedule;
+
+// Lets Settings → System status confirm the cron entry is working.
+Schedule::call(fn () => Cache::forever(SystemStatus::HEARTBEAT, now()->timestamp))
+    ->name('heartbeat')
+    ->everyMinute();
 
 Schedule::command('tasks:send-reminders')->everyMinute()->withoutOverlapping();
 Schedule::command('tasks:generate-recurring')->everyFifteenMinutes()->withoutOverlapping();

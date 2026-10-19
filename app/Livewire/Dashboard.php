@@ -8,6 +8,7 @@ use App\Models\Plan;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
+use App\Support\SystemStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
@@ -76,6 +77,9 @@ class Dashboard extends Component
                 ->get()
             : collect();
 
-        return view('livewire.dashboard', compact('stats', 'myTasks', 'overdue', 'projects', 'plans', 'team'));
+        // Admins are warned when something the app relies on isn't working.
+        $systemProblems = $user->isAdmin() ? app(SystemStatus::class)->problems() : 0;
+
+        return view('livewire.dashboard', compact('stats', 'myTasks', 'overdue', 'projects', 'plans', 'team', 'systemProblems'));
     }
 }

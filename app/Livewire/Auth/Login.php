@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Auth;
 
+use App\Enums\TwoFactorMethod;
+use App\Support\TwoFactor;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
@@ -42,7 +44,8 @@ class Login extends Component
 
         $credentials = ['email' => $this->email, 'password' => $this->password, 'is_active' => true];
 
-        if (! Auth::attempt($credentials, $this->remember)) {
+        // Check the password without signing in yet: 2FA may be needed first.
+        if (! Auth::validate($credentials)) {
             RateLimiter::hit($accountKey, 300);
             RateLimiter::hit($ipKey, 60);
 
@@ -50,7 +53,24 @@ class Login extends Component
         }
 
         RateLimiter::clear($accountKey);
+
+        $user = Auth::getLastAttempted();
+        $twoFactor = app(TwoFactor::class);
+
+        if ($user->hasTwoFactor() && ! $twoFactor->isTrustedDevice(request(), $user)) {
+            session()->regenerate();
+            session()->put(TwoFactor::PENDING, ['id' => $user->id, 'remember' => $this->remember, 'at' => now()->timestamp]);
+
+            if ($user->twoFactorMethod() === TwoFactorMethod::Email) {
+                $twoFactor->sendEmailCode($user);
+            }
+
+            return $this->redirectRoute('two-factor.challenge', navigate: true);
+        }
+
+        Auth::login($user, $this->remember);
         session()->regenerate();
+        session()->put(TwoFactor::PASSED, true);
 
         return $this->redirectIntended(route('dashboard'));
     }

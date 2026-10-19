@@ -16,8 +16,11 @@ Route::middleware('installed')->group(function () {
         Route::livewire('/reset-password/{token}', Livewire\Auth\ResetPassword::class)->name('password.reset');
     });
 
-    Route::middleware(['auth', 'auth.session', 'active'])->group(function () {
-        Route::post('/logout', LogoutController::class)->name('logout');
+    Route::livewire('/two-factor-challenge', Livewire\Auth\TwoFactorChallenge::class)->name('two-factor.challenge');
+
+    Route::post('/logout', LogoutController::class)->middleware('auth')->name('logout');
+
+    Route::middleware(['auth', 'auth.session', 'active', 'two-factor'])->group(function () {
 
         Route::livewire('/', Livewire\Dashboard::class)->name('dashboard');
         Route::livewire('/board', Livewire\Board::class)->name('board');
@@ -40,5 +43,6 @@ Route::middleware('installed')->group(function () {
         });
 
         Route::livewire('/settings', Livewire\Settings::class)->middleware('can:admin')->name('settings');
+        Route::livewire('/settings/status', Livewire\SystemStatusPage::class)->middleware('can:admin')->name('settings.status');
     });
 });

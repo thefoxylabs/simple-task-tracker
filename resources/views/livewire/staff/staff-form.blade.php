@@ -50,6 +50,17 @@
                         <input wire:model="password" id="s-password" type="password" class="input" autocomplete="new-password">
                         @error('password') <p class="error">{{ $message }}</p> @enderror
                     </div>
+                    @if ($userId && $this->editingUser)
+                        <div class="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-slate-50 p-4 text-sm ring-1 ring-slate-200 sm:col-span-2">
+                            <span class="flex items-center gap-2 text-slate-700">
+                                <x-icon name="shield" class="size-4 text-slate-400" />
+                                Two-factor: <b class="font-semibold">{{ $this->editingUser->twoFactorMethod()?->label() ?? 'Off' }}</b>
+                            </span>
+                            @if ($this->editingUser->two_factor_method)
+                                <button type="button" wire:click="resetTwoFactor" wire:confirm="Reset {{ $this->editingUser->name }}'s two-factor sign-in? Use this if they lost their phone." class="btn btn-ghost px-2 py-1 text-red-600">Reset</button>
+                            @endif
+                        </div>
+                    @endif
                     @if ($userId)
                         <label class="flex items-center gap-2 text-sm text-slate-700 sm:col-span-2">
                             <input wire:model="is_active" type="checkbox" class="size-4 rounded border-slate-300 text-brand-600 focus:ring-brand-600">

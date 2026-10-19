@@ -1,13 +1,7 @@
 <div>
     <x-page-header title="Settings" description="Make this workspace your own." />
 
-    <div class="segmented mb-6 sm:inline-flex">
-        @foreach (['branding' => ['Branding', 'paint'], 'general' => ['General', 'cog'], 'mail' => ['Email (SMTP)', 'mail']] as $key => [$label, $icon])
-            <button type="button" wire:click="$set('tab', '{{ $key }}')" class="{{ $tab === $key ? 'tab tab-active' : 'tab' }} flex items-center gap-1.5">
-                <x-icon :name="$icon" class="size-4" /> {{ $label }}
-            </button>
-        @endforeach
-    </div>
+    @include('partials.settings-tabs', ['current' => $tab])
 
     @if ($tab === 'branding')
         <form wire:submit="saveBranding" class="card max-w-3xl">
@@ -112,6 +106,51 @@
             </div>
             <div class="flex justify-end border-t border-slate-100 px-6 py-4">
                 <button type="submit" class="btn btn-primary">Save settings</button>
+            </div>
+        </form>
+    @elseif ($tab === 'security')
+        <form wire:submit="saveSecurity" class="card max-w-3xl">
+            <div class="space-y-6 p-6">
+                <div>
+                    <h2 class="font-semibold text-slate-900">Security</h2>
+                    <p class="mt-1 text-sm text-slate-500">Protect every account with a second sign-in step.</p>
+                </div>
+
+                <label class="flex items-start gap-3 rounded-xl bg-slate-50 p-4 ring-1 ring-slate-200">
+                    <input wire:model.live="two_factor_required" type="checkbox" class="mt-0.5 size-4 rounded border-slate-300">
+                    <span class="text-sm">
+                        <span class="font-medium text-slate-900">Require two-factor authentication for everyone</span>
+                        <span class="mt-0.5 block text-slate-500">Everyone gets a 6-digit code by email when they sign in, unless they've set up an authenticator app from their profile. People already signed in will be asked to verify on their next visit.</span>
+                    </span>
+                </label>
+
+                @error('two_factor_required') <p class="error">{{ $message }}</p> @enderror
+
+                @if ($two_factor_required && ! $mailReady)
+                    <div class="flex gap-3 rounded-xl bg-amber-50 p-4 text-sm text-amber-800 ring-1 ring-amber-600/20">
+                        <x-icon name="alert" class="size-5 shrink-0" />
+                        <p>Email isn't set up to deliver messages yet, so nobody would receive their sign-in codes. Set up <a href="{{ route('settings', ['tab' => 'mail']) }}" wire:navigate class="font-semibold underline">Email (SMTP)</a> and send a test email first.</p>
+                    </div>
+                @endif
+
+                <label class="flex items-start gap-3 rounded-xl bg-slate-50 p-4 ring-1 ring-slate-200">
+                    <input wire:model="two_factor_trusted_devices" type="checkbox" class="mt-0.5 size-4 rounded border-slate-300">
+                    <span class="text-sm">
+                        <span class="font-medium text-slate-900">Allow "Trust this device for {{ \App\Support\TwoFactor::TRUST_DAYS }} days"</span>
+                        <span class="mt-0.5 block text-slate-500">People can skip the code on their own computer or phone for {{ \App\Support\TwoFactor::TRUST_DAYS }} days. Turn this off to ask for a code at every sign-in.</span>
+                    </span>
+                </label>
+
+                <div class="grid gap-3 sm:grid-cols-3">
+                    <div class="rounded-xl p-4 ring-1 ring-slate-200"><p class="text-xs text-slate-500">Using an authenticator app</p><p class="mt-1 text-2xl font-bold text-slate-900">{{ $twoFactorStats['app'] }}</p></div>
+                    <div class="rounded-xl p-4 ring-1 ring-slate-200"><p class="text-xs text-slate-500">Using email codes</p><p class="mt-1 text-2xl font-bold text-slate-900">{{ $twoFactorStats['email'] }}</p></div>
+                    <div class="rounded-xl p-4 ring-1 ring-slate-200"><p class="text-xs text-slate-500">Without two-factor</p><p class="mt-1 text-2xl font-bold {{ $twoFactorStats['none'] ? 'text-amber-600' : 'text-slate-900' }}">{{ $twoFactorStats['none'] }}</p></div>
+                </div>
+
+                <p class="text-xs text-slate-500">Locked out because email stopped working? On the server, run <code class="rounded bg-slate-100 px-1 py-0.5">php artisan app:reset-two-factor --disable-requirement</code> to switch the requirement off, or <code class="rounded bg-slate-100 px-1 py-0.5">php artisan app:reset-two-factor someone@company.com</code> to reset one person.</p>
+            </div>
+            <div class="flex justify-end border-t border-slate-100 px-6 py-4">
+                <button type="submit" class="btn btn-primary">Save security settings</button>
             </div>
         </form>
     @else

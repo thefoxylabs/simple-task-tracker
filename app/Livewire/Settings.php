@@ -2,9 +2,12 @@
 
 namespace App\Livewire;
 
+use App\Models\User;
 use App\Notifications\TestMail;
 use App\Support\Mailer;
 use App\Support\Settings as SettingsStore;
+use App\Support\SystemStatus;
+use App\Support\TwoFactor;
 use App\Support\Uploads;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Gate;
@@ -64,6 +67,11 @@ class Settings extends Component
 
     public string $test_email = '';
 
+    // Security
+    public bool $two_factor_required = false;
+
+    public bool $two_factor_trusted_devices = true;
+
     public function boot(): void
     {
         Gate::authorize('admin');
@@ -79,6 +87,8 @@ class Settings extends Component
         $this->mail_port = (string) $settings->get('mail_port');
         $this->notify_on_assignment = (bool) $settings->get('notify_on_assignment');
         $this->mail_enabled = (bool) $settings->get('mail_enabled');
+        $this->two_factor_required = (bool) $settings->get('two_factor_required');
+        $this->two_factor_trusted_devices = (bool) $settings->get('two_factor_trusted_devices');
         $this->test_email = auth()->user()->email;
     }
 
@@ -178,6 +188,36 @@ class Settings extends Component
         $this->dispatch('notify', message: 'Mail settings saved');
     }
 
+    public function saveSecurity(SettingsStore $settings): void
+    {
+        $this->validate([
+            'two_factor_required' => ['boolean'],
+            'two_factor_trusted_devices' => ['boolean'],
+        ]);
+
+        if ($this->two_factor_required && ! $this->mailReady() && app()->environment('production')) {
+            $this->addError('two_factor_required', 'Set up email (SMTP) before requiring two-factor authentication.');
+
+            return;
+        }
+
+        $settings->set([
+            'two_factor_required' => $this->two_factor_required,
+            'two_factor_trusted_devices' => $this->two_factor_trusted_devices,
+        ]);
+
+        // You just proved who you are by changing this, so don't lock yourself out.
+        session()->put(TwoFactor::PASSED, true);
+
+        $this->dispatch('notify', message: 'Security settings saved');
+    }
+
+    /** Whether emails will actually be delivered (not just written to the log). */
+    protected function mailReady(): bool
+    {
+        return ! in_array(config('mail.default'), ['log', 'array'], true);
+    }
+
     public function sendTestMail(SettingsStore $settings): void
     {
         $this->validate(['test_email' => ['required', 'email']]);
@@ -188,6 +228,7 @@ class Settings extends Component
             Notification::route('mail', $this->test_email)->notifyNow(new TestMail);
             $this->dispatch('notify', message: 'Test email sent to '.$this->test_email);
         } catch (Throwable $e) {
+            SystemStatus::recordMailFailure($e);
             $this->addError('test_email', 'Sending failed: '.$e->getMessage());
         }
     }
@@ -201,6 +242,18 @@ class Settings extends Component
         Artisan::call('queue:restart');
     }
 
+    /** How many active people use each sign-in method. */
+    protected function twoFactorStats(): array
+    {
+        $stats = ['app' => 0, 'email' => 0, 'none' => 0];
+
+        User::active()->get()->each(function (User $user) use (&$stats) {
+            $stats[$user->twoFactorMethod()?->value ?? 'none']++;
+        });
+
+        return $stats;
+    }
+
     protected function deleteLogoFile(SettingsStore $settings): void
     {
         if ($path = $settings->get('logo_path')) {
@@ -210,9 +263,11 @@ class Settings extends Component
 
     public function render()
     {
-        $this->tab = in_array($this->tab, ['branding', 'general', 'mail'], true) ? $this->tab : 'branding';
+        $this->tab = in_array($this->tab, ['branding', 'general', 'mail', 'security'], true) ? $this->tab : 'branding';
 
         return view('livewire.settings', [
+            'mailReady' => $this->mailReady(),
+            'twoFactorStats' => $this->tab === 'security' ? $this->twoFactorStats() : [],
             'hasStoredPassword' => filled(settings('mail_password')),
             'envMailer' => config('mail.default'),
         ]);

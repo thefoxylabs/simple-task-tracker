@@ -7,6 +7,7 @@ use App\Models\StaffGroup;
 use App\Models\User;
 use App\Notifications\StaffInvitation;
 use App\Support\Mailer;
+use App\Support\TwoFactor;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
@@ -130,6 +131,24 @@ class StaffForm extends Component
         $this->dispatch('staff-saved');
         $this->dispatch('notify', message: $this->userId ? 'Staff member updated' : ($this->invite ? 'Staff member added and invited' : 'Staff member added'));
         $this->close();
+    }
+
+    #[Computed]
+    public function editingUser(): ?User
+    {
+        return $this->userId ? User::find($this->userId) : null;
+    }
+
+    /** Clear someone's 2FA set-up, e.g. if they lost their phone. */
+    public function resetTwoFactor(TwoFactor $twoFactor): void
+    {
+        $user = User::findOrFail($this->userId);
+        Gate::authorize('manage-user', $user);
+
+        $twoFactor->reset($user);
+        unset($this->editingUser);
+
+        $this->dispatch('notify', message: 'Two-factor sign-in reset for '.$user->name);
     }
 
     public function close(): void

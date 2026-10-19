@@ -10,6 +10,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Upgraded to **Laravel 13** (from Laravel 12). Task Tracker now requires **PHP 8.3 or newer**.
 - Laravel Tinker upgraded to version 3, and Guzzle to version 8 (pulled in by Laravel 13).
 
+### Added
+- **Two-factor authentication.** Email codes by default, or an authenticator app with QR code set-up and recovery codes. Admins can require 2FA for everyone (Settings → Security), people already signed in are asked to verify, and devices can be trusted for 30 days. Admins and managers can reset someone's 2FA, and `php artisan app:reset-two-factor` is a way back in if email stops working.
+- **System status page** (Settings → System status): live checks for the database, email settings and SMTP connection, email queue, scheduler, file storage, PHP, folder permissions, HTTPS, debug mode and security settings, each with how to fix it. Admins see a dashboard warning when an essential check fails.
+- **Queued emails.** Assignment emails, reminders, invitations and password resets are sent in the background through the database queue, with three automatic retries. The scheduler processes the queue, so no extra worker is needed (`QUEUE_WORKER_IN_SCHEDULER`).
+- Project homepage on GitHub Pages, with a screenshot lightbox and Foxy Labs installation and hosting packages: Basic install (from $250), Full setup ($500), Managed hosting (from $99/month) and maintenance plans (from $49/month).
+
 ### Security
 - Fixed a cross-site scripting issue where a crafted `?period=` link on the Plans page could run JavaScript for a manager or admin who clicked "New plan". All values read from the URL are now checked against allowed values.
 - Staff can no longer open project pages or download project files for projects they aren't part of. Every file download now checks access to its task or project.
@@ -24,10 +30,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Password reset and invitation jobs are encrypted in the queue, and failed jobs are pruned after a week.
 - Safer download filenames, SVG logos disabled, and session cookies are encrypted and HTTPS-only by default.
 - Docker Compose no longer starts with default database passwords. "Keep me signed in" is now off by default.
-
-### Added
-- **Queued emails.** Assignment emails, reminders, invitations and password resets are sent in the background through the database queue, with three automatic retries. The scheduler processes the queue, so no extra worker is needed (`QUEUE_WORKER_IN_SCHEDULER`).
-- Project homepage on GitHub Pages, with a screenshot lightbox and Foxy Labs installation and hosting packages: Basic install (from $250), Full setup ($500), Managed hosting (from $99/month) and maintenance plans (from $49/month).
 
 ## [1.0.0] - 2026-10-19
 

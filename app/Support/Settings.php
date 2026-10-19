@@ -29,6 +29,10 @@ class Settings
         'default_reminder_minutes' => 60,
         'notify_on_assignment' => true,
 
+        // Security
+        'two_factor_required' => false,
+        'two_factor_trusted_devices' => true,
+
         // Mail (SMTP)
         'mail_enabled' => false,
         'mail_host' => '',

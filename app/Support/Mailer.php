@@ -23,6 +23,7 @@ class Mailer
             return true;
         } catch (Throwable $e) {
             report($e);
+            SystemStatus::recordMailFailure($e);
 
             return false;
         }

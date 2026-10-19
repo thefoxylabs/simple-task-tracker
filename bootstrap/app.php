@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureInstalled;
+use App\Http\Middleware\EnsureTwoFactorPassed;
 use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
@@ -24,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'installed' => EnsureInstalled::class,
             'active' => EnsureUserIsActive::class,
+            'two-factor' => EnsureTwoFactorPassed::class,
         ]);
         // Check for a fresh install before asking anyone to sign in.
         $middleware->prependToPriorityList(AuthenticatesRequests::class, EnsureInstalled::class);

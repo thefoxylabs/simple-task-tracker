@@ -10,6 +10,14 @@
         </x-slot:actions>
     </x-page-header>
 
+    @if ($systemProblems)
+        <a href="{{ route('settings.status') }}" wire:navigate class="mb-6 flex items-center gap-3 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800 ring-1 ring-red-600/20 transition hover:bg-red-100">
+            <x-icon name="alert" class="size-5 shrink-0 text-red-600" />
+            <span class="flex-1"><b>{{ $systemProblems }} system {{ \Illuminate\Support\Str::plural('check', $systemProblems) }} failing.</b> Things like emails or reminders may not be working.</span>
+            <span class="font-semibold whitespace-nowrap">View system status →</span>
+        </a>
+    @endif
+
     <div class="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         <x-stat label="Open tasks" :value="$stats['open']" icon="list" />
         <x-stat label="Due today" :value="$stats['today']" icon="clock" tone="amber" />

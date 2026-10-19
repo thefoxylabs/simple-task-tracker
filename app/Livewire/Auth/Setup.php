@@ -5,6 +5,7 @@ namespace App\Livewire\Auth;
 use App\Enums\Role;
 use App\Models\User;
 use App\Support\SetupToken;
+use App\Support\TwoFactor;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\RateLimiter;
@@ -92,6 +93,7 @@ class Setup extends Component
 
         Auth::login($user);
         session()->regenerate();
+        session()->put(TwoFactor::PASSED, true);
 
         return $this->redirectRoute('dashboard');
     }

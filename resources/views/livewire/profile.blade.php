@@ -54,4 +54,6 @@
             <button type="submit" class="btn btn-primary">Change password</button>
         </div>
     </form>
+
+    <livewire:two-factor-settings />
 </div>
